@@ -28,7 +28,11 @@ function TopNavbar() {
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>
-        <WalletUI primary="red" textColor="#FF0000" />
+        <WalletUI
+          primary="red"
+          textColor="#FF0000"
+          backgroundColor="translucent"
+        />
       </Container>
     </Navbar>
   );
