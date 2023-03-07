@@ -22,7 +22,7 @@ export default function Home() {
             gap: "3vh",
           }}
         >
-          <h1>BENVENUTI SU Helpy </h1>
+          <h1>BENVENUTI SU HELPY </h1>
           <h4>Connetti wallet per iniziare</h4>
         </div>
       </main>
