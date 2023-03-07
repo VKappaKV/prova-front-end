@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>DONPO</title>
+        <title>Helpy</title>
         <link rel="icon" href="/Crocerossa.png" />
         <style />
       </Head>
@@ -22,7 +22,7 @@ export default function Home() {
             gap: "3vh",
           }}
         >
-          <h1>BENVENUTI SU DONPO</h1>
+          <h1>BENVENUTI SU Helpy </h1>
           <h4>Connetti wallet per iniziare</h4>
         </div>
       </main>
