@@ -557,6 +557,7 @@ def donation_transfer(
         ),
     )
 
+#commento
 
 @smart_asa_abi.method(close_out=CallConfig.ALL)
 def asset_app_closeout(
