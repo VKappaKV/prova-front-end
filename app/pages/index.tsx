@@ -1,6 +1,6 @@
 import TopNavbar from "@/src/UI/Navbar";
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
+import ReadContract from "../src/components/ReadContract";
 
 export default function Home() {
   return (
@@ -18,12 +18,13 @@ export default function Home() {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            height: "100vh",
+            height: "100%",
             gap: "3vh",
           }}
         >
           <h1>BENVENUTI SU HELPY </h1>
           <h4>Connetti wallet per iniziare</h4>
+          <ReadContract />
         </div>
       </main>
     </>
