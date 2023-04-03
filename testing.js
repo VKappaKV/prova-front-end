@@ -4,109 +4,133 @@ const algosdk = require("algosdk");
 const fs = require("fs");
 
 // Create client object to connect to sandbox's algod client
-const algodToken =
-  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+/*
+For Sanbbox
+const algodToken = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 const algodServer = "http://localhost";
-const algodPort = 4001;
+const algodPort = 4001;*/
+
+//For Purestake
+const algodToken = {
+  'X-API-Key': "dUAm46iRb73HzsHBrEYGr1nVw81Yc0Kp5eiNmZDF"
+}
+const algodServer = 'https://testnet-algorand.api.purestake.io/ps2'
+const algodPort = '';
+
+
 const client = new algosdk.Algodv2(algodToken, algodServer, algodPort);
+
+const jsonPath = "contract/artifacts/crt.json";
+const approvalPath = "contract/artifacts/crt_approval.teal";
+const clearStatePath = "contract/artifacts/crt_clearstate.teal";
 
 // The accounts below should be generated with the createAccount() function
 
 // Creator account
-const mnenonic =
-  "camp cannon shadow squeeze merry fade bone become alter essence salute tunnel long purpose item search mom upset alpha rude siren run worry abstract settle";
+const mnenonic ="cheese enter impact deliver media side youth skill easy school renew spice detect apple blouse focus undo knee okay liquid robust invite twice absent shield";
 const account = algosdk.mnemonicToSecretKey(mnenonic);
-const accAdd = "J6GY23OMZJCMW5WXRKKZBBINYH244WMOD5DGHE4H6JYUZEYBEBWWVYK3XE";
+const accAdd = "2WKBPFJNWGMOENUBNWD7JY2CXE2RAVSL5EI6NULZZWTZ5FH5TWETB5EPPQ";
 
-// Merchant account:
-const merchMnemonic =
-  "page opinion sight vote inherit surprise hurry harbor social velvet lounge still luxury urge come general race state busy vocal output never inquiry absent denial";
+// Merchant account: 
+const merchMnemonic = "trumpet canal siege hip what adjust silk clarify foot siege limb clinic dismiss leopard region resemble solution owner nurse confirm video eyebrow small abandon online";
 const merchAccount = algosdk.mnemonicToSecretKey(merchMnemonic);
-const merchAddr = "5RIR33N7BDZ5EUPNBWPDEAMEXOCLD4QLAIAYEJGRGC6PS2E42OWBOGPP4I";
+const merchAddr = "MSHIHS7AHBMSJOXN2HWJTANMUCWSRLAHGLJVHVXDACRFV4JBSJYV7G5ZKU";
 
-// CRI account:
-const CriMnemonic =
-  "peasant tooth kingdom alert number unhappy purity relax demand uncover special frog peace home face skirt absorb intact yard oppose script road grief ability grow";
+// CRI account: 
+const CriMnemonic = "strike two seven agent rifle paddle direct hurdle control trigger bacon proud ugly inflict enforce tent giggle journey arrive business color coyote chase above solid";
 const CriAccount = algosdk.mnemonicToSecretKey(CriMnemonic);
-const CriAddr = "S4HVCB4U4QSA52DFRZN4EL5A6CA3OYNI5AX5H3TKOZK7EIJ7XOAOBG57VA";
+const CriAddr = "TBB76BCKOQUEZ2INFYIKCWI7UQYPJ33Y4TMVMAYPURPLAGIBFKCHVBC5L4";
 
 // Utility variables
+let usdc_id = 67395862;
 
-// The following variables have to be changed after the deploy of the contract
-let smartContractAddress =
-  "Y5BFRELEVAJKE4F7M2DTJIA2YKQE5RXC6ZOASH2KRNANQLBB32JEVVQLVI";
-let appId = 34;
-let assetId = 37;
+// Da compilare dopo step doDeploy
+let smartContractAddress = "NC6BZAISGFL2OXU6FSN7MQH6KOCAKOWUTVLJ32ANJSOKHZTZ6QNBMFP2MU"; 
+let appId = 170690461;
 
-//path to artifacts:
-path_json =
-  "C:\\Users\\Jacopo\\Documents\\GitHub\\Project-RedCrossToken\\Contract\\artifacts\\crt.json";
+// Da compilare dopo step doStartingTasks
+let assetId = 170690482; 
 
-// Steps: set to true one at a time starting from the top
-let createAccountTask = false; //use it to create the starting account for each role
-let doStartingTasks = false; //deploy, fund the contract and asset creation
+
+// Steps: 
+let doDeploy = false; //deploy
+let doStartingTasks = false; // fund the contract and asset creation
+let doContractUsdcOptIn = false; 
 let doOptInAndAssignRole = false; // creator opt-in into app and ASA
 let buyToken = true; //creator buy smart ASA using ALGO
-let assign_merchant_role = false; //make merchant opt in to app and asset and once opted in assign merchant role
 let payMerchant_ = false; // Creator pay a merchant using smart ASA
 let donor_transfer = false; // Transfer from creator to CRI
 
 main();
 
 async function main() {
-  if (createAccountTask) {
-    console.log("[Creator account]:");
-    createAccount();
-    console.log("[Merchant account]:");
-    createAccount();
-    console.log("[Red Cross account]:");
-    createAccount();
-  }
 
-  if (assign_merchant_role) {
-    await appOptIn(merchAccount, 34);
-    await assetOptIn(merchAccount, 37);
-    assign_merch_role();
-  }
+  console.log("start");
 
-  if (doStartingTasks) {
+  if (doDeploy) {
+
     appId = await deploy();
 
     console.log("App created with appId: " + appId);
     smartContractAddress = algosdk.getApplicationAddress(appId);
     console.log("Application address: " + smartContractAddress);
 
+  }
+
+  if(doStartingTasks){
+
     // Transfer Algo to SC account
-    await algoTranfer(account, smartContractAddress, 1000000);
+    await algoTranfer(account, smartContractAddress, 1000000); //1 ALGO
 
     // Smart Asa creation
     assetId = await assetCreateMethod();
-    console.log("Smart ASA crated with ID: " + assetId);
+    //console.log("Smart ASA crated with ID: " + assetId.toString());
   }
 
   if (doOptInAndAssignRole) {
+
     // Opt-in
     await assetOptIn(account, assetId);
-    console.log("User has opted into the asset");
     await appOptIn(account, appId);
-    console.log("User has opted into the application");
+    console.log("User optins done");
 
+    await assetOptIn(merchAccount, assetId);
+    await appOptIn(merchAccount, appId);
+    console.log("Merchant optins done");
+
+    await assetOptIn(CriAccount, assetId);
+    await appOptIn(CriAccount, appId);
+    console.log("CRI optins done");
+ 
     // Assign roles
+   
     await assign_donor_role();
-    console.log("Role assigned");
+    console.log("Donor role assigned");
+    await assign_merch_role();
+    console.log("Merchant role assigned");
+    await assign_redcross_role();
+    console.log("RCI role assigned");
+ 
+  }
+
+  if(doContractUsdcOptIn){
+    await contract_opt_in_usdc();
   }
 
   if (buyToken) {
-    donor_buy_token();
+    await donor_buy_token();
   }
 
   if (payMerchant_) {
-    pay_merchant();
+    await pay_merchant();
   }
 
   if (donor_transfer) {
-    donor_transfer_asa();
+    await donor_transfer_asa();
   }
+
+  console.log("END");
+
 }
 
 async function deploy() {
@@ -116,12 +140,8 @@ async function deploy() {
   // declare onComplete as NoOp
   onComplete = algosdk.OnApplicationComplete.NoOpOC;
 
-  const approvalProgram = fs
-    .readFileSync("./artifacts/crt_approval.teal")
-    .toString();
-  const clearStateProgram = fs
-    .readFileSync("./artifacts/crt_clearstate.teal")
-    .toString();
+  const approvalProgram = fs.readFileSync(approvalPath).toString();
+  const clearStateProgram = fs.readFileSync(clearStatePath).toString();
 
   const compiledApprovalProgram = await client.compile(approvalProgram).do();
   const compiledClearState = await client.compile(clearStateProgram).do();
@@ -142,7 +162,7 @@ async function deploy() {
     codificatoClear,
     4,
     0,
-    4,
+    5,
     7,
     undefined,
     undefined,
@@ -185,11 +205,10 @@ async function assetCreateMethod() {
   const atc = new algosdk.AtomicTransactionComposer();
 
   const sp = await client.getTransactionParams().do();
-  sp.flatFee = true;
-  sp.fee = 1000;
+  sp.fee = 10;
 
   // Read in the local contract.json file
-  const buff = fs.readFileSync(path_json);
+  const buff = fs.readFileSync(jsonPath);
 
   // Parse the json file into an object, pass it to create an ABIContract object
   const contract = new algosdk.ABIContract(JSON.parse(buff.toString()));
@@ -208,18 +227,24 @@ async function assetCreateMethod() {
   });
 
   const result = await atc.execute(client, 2);
-  const buffer = result.methodResults[0].rawReturnValue;
 
+  /*const buffer = result.methodResults[0].rawReturnValue;*/
+
+  console.log("asset created. Check AssetID on explorer before to continue");
+
+  /*
   var assetId = buffer.readUIntBE(0, Uint8Array.length);
 
   for (const idx in result.methodResults) {
     console.log(result.methodResults[idx]);
-  }
+  }*/
 
-  return assetId;
+  return 0;
 }
 
+
 async function algoTranfer(sender, receiver, amount) {
+
   let params = await client.getTransactionParams().do();
   // comment out the next two lines to use suggested fee
   params.fee = algosdk.ALGORAND_MIN_TX_FEE;
@@ -305,10 +330,9 @@ async function assign_donor_role() {
   const atc = new algosdk.AtomicTransactionComposer();
 
   const sp = await client.getTransactionParams().do();
-  sp.flatFee = true;
-  sp.fee = 1000;
+  sp.fee = 10;
 
-  const buff = fs.readFileSync(path_json);
+  const buff = fs.readFileSync(jsonPath);
 
   const contract = new algosdk.ABIContract(JSON.parse(buff.toString()));
 
@@ -335,10 +359,9 @@ async function assign_merch_role() {
   const atc = new algosdk.AtomicTransactionComposer();
 
   const sp = await client.getTransactionParams().do();
-  sp.flatFee = true;
-  sp.fee = 1000;
+  sp.fee = 10;
 
-  const buff = fs.readFileSync(path_json);
+  const buff = fs.readFileSync(jsonPath);
 
   const contract = new algosdk.ABIContract(JSON.parse(buff.toString()));
 
@@ -365,10 +388,9 @@ async function assign_redcross_role() {
   const atc = new algosdk.AtomicTransactionComposer();
 
   const sp = await client.getTransactionParams().do();
-  sp.flatFee = true;
-  sp.fee = 1000;
+  sp.fee = 10;
 
-  const buff = fs.readFileSync(path_json);
+  const buff = fs.readFileSync(jsonPath);
   const contract = new algosdk.ABIContract(JSON.parse(buff.toString()));
 
   const commonParams = {
@@ -380,7 +402,7 @@ async function assign_redcross_role() {
 
   atc.addMethodCall({
     method: getMethodByName("set_redcross_role", contract),
-    methodArgs: [merchAccount.addr],
+    methodArgs: [CriAddr],
     ...commonParams,
   });
 
@@ -394,9 +416,8 @@ async function donor_buy_token() {
   const atc = new algosdk.AtomicTransactionComposer();
 
   const sp = await client.getTransactionParams().do();
-  sp.flatFee = true;
-  sp.fee = 2000;
-  const buff = fs.readFileSync(path_json);
+  sp.fee = 10;
+  const buff = fs.readFileSync(jsonPath);
   const contract = new algosdk.ABIContract(JSON.parse(buff.toString()));
 
   const commonParams = {
@@ -407,12 +428,18 @@ async function donor_buy_token() {
   };
 
   txn = {
-    txn: new Transaction({
+    /*txn: new Transaction({
       from: account.addr,
       to: smartContractAddress,
       amount: 10000,
       ...sp,
-    }),
+    }),*/
+    txn: algosdk.makeAssetTransferTxnWithSuggestedParams(
+        account.addr, 
+        smartContractAddress, 
+        undefined, undefined,
+        1, undefined, usdc_id, sp),
+
     signer: algosdk.makeBasicAccountTransactionSigner(account),
   };
 
@@ -432,10 +459,9 @@ async function pay_merchant() {
   const atc = new algosdk.AtomicTransactionComposer();
 
   const sp = await client.getTransactionParams().do();
-  sp.flatFee = true;
-  sp.fee = 1000;
+  sp.fee = 20;
 
-  const buff = fs.readFileSync(path_json);
+  const buff = fs.readFileSync(jsonPath);
   const contract = new algosdk.ABIContract(JSON.parse(buff.toString()));
   const commonParams = {
     appID: appId,
@@ -446,7 +472,7 @@ async function pay_merchant() {
 
   atc.addMethodCall({
     method: getMethodByName("pay_merchant", contract),
-    methodArgs: [assetId, 5000, account.addr, merchAccount.addr],
+    methodArgs: [assetId, usdc_id, 1, account.addr, merchAccount.addr],
     ...commonParams,
   });
 
@@ -467,10 +493,9 @@ async function donor_transfer_asa() {
   const atc = new algosdk.AtomicTransactionComposer();
 
   const sp = await client.getTransactionParams().do();
-  sp.flatFee = true;
-  sp.fee = 1000;
+  sp.fee = 10;
 
-  const buff = fs.readFileSync(path_json);
+  const buff = fs.readFileSync(jsonPath);
   const contract = new algosdk.ABIContract(JSON.parse(buff.toString()));
   const commonParams = {
     appID: appId,
@@ -493,9 +518,37 @@ async function donor_transfer_asa() {
 
 // Utility function to return an ABIMethod by its name
 function getMethodByName(name, contract) {
-  const m = contract.methods.find((mt) => {
-    return mt.name == name;
-  });
-  if (m === undefined) throw Error("Method undefined: " + name);
-  return m;
-}
+    const m = contract.methods.find((mt) => {
+      return mt.name == name;
+    });
+    if (m === undefined) throw Error("Method undefined: " + name);
+    return m;
+  }
+
+
+  async function contract_opt_in_usdc() {
+    const atc = new algosdk.AtomicTransactionComposer();
+  
+    const sp = await client.getTransactionParams().do();
+    sp.fee = 10;
+  
+    const buff = fs.readFileSync(jsonPath);
+    const contract = new algosdk.ABIContract(JSON.parse(buff.toString()));
+    const commonParams = {
+      appID: appId,
+      sender: account.addr,
+      suggestedParams: sp,
+      signer: algosdk.makeBasicAccountTransactionSigner(account),
+    };
+  
+    atc.addMethodCall({
+      method: getMethodByName("contract_opt_in_usdc", contract),
+      methodArgs: [usdc_id],
+      ...commonParams,
+    });
+  
+    const result = await atc.execute(client, 2);
+    for (const idx in result.methodResults) {
+      console.log(result.methodResults[idx]);
+    }
+  }

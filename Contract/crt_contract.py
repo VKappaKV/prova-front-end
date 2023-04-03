@@ -19,6 +19,7 @@ class GlobalInts:
     decimals = Bytes("decimals")
     default_frozen = Bytes("default_frozen")
     smart_asa_id = Bytes("smart_asa_id")
+    usdc_id = Bytes("usdc_id")
 
 
 class GlobalBytes:
@@ -102,6 +103,7 @@ def init_global_state() -> Expr:
         App.globalPut(GlobalState.reserve_addr, Global.zero_address()),
         App.globalPut(GlobalState.freeze_addr, Global.zero_address()),
         App.globalPut(GlobalState.clawback_addr, Global.zero_address()),
+        App.globalPut(GlobalState.usdc_id, Int(67395862)) 
     )
 
 
@@ -193,9 +195,51 @@ def smart_asa_transfer_inner_txn(
                 TxnField.fee: Int(0),
                 TxnField.type_enum: TxnType.AssetTransfer,
                 TxnField.xfer_asset: smart_asa_id,
-                TxnField.asset_amount: asset_amount,
-                TxnField.asset_sender: asset_sender,
+                TxnField.asset_amount: asset_amount, 
+                TxnField.asset_sender: asset_sender,  
                 TxnField.asset_receiver: asset_receiver,
+            }
+        ),
+        InnerTxnBuilder.Submit(),
+    )
+
+#TODO: capire perche questo funziona !
+@Subroutine(TealType.none)
+def smart_asa_transfer_inner_txn_2(
+        smart_asa_id: Expr,
+        asset_amount: Expr,
+        asset_sender: Expr,
+        asset_receiver: Expr,
+) -> Expr:
+    return Seq(
+        InnerTxnBuilder.Begin(),
+        InnerTxnBuilder.SetFields(
+            {
+                TxnField.fee: Int(0),
+                TxnField.type_enum: TxnType.AssetTransfer,
+                TxnField.xfer_asset: smart_asa_id,
+                TxnField.asset_amount: asset_amount, 
+                TxnField.sender: asset_sender,  
+                TxnField.asset_receiver: asset_receiver,
+            }
+        ),
+        InnerTxnBuilder.Submit(),
+    )
+
+
+def contract_asa_opt_in_txn(
+        asa_id: Expr,
+) -> Expr:
+    return Seq(
+        InnerTxnBuilder.Begin(),
+        InnerTxnBuilder.SetFields(
+            {
+                TxnField.fee: Int(0),
+                TxnField.type_enum: TxnType.AssetTransfer,
+                TxnField.xfer_asset: asa_id,
+                TxnField.asset_amount: Int(0),
+                TxnField.sender: Global.current_application_address(), # Si use sender per opt-in
+                TxnField.asset_receiver: Global.current_application_address(),
             }
         ),
         InnerTxnBuilder.Submit(),
@@ -220,7 +264,6 @@ def algo_transfer_inner_txn(
             }
         ),
         InnerTxnBuilder.Submit(),
-
     )
 
 
@@ -362,6 +405,14 @@ def asset_create(*, output: abi.Uint64) -> Expr:
 
 
 @smart_asa_abi.method
+def contract_opt_in_usdc(asset: abi.Asset):
+    asset_id = asset.asset_id()
+
+    # TODO: Add check to avoid that extenral call to this method. Only crator can call it
+    return Seq(contract_asa_opt_in_txn(asset_id)) 
+
+
+@smart_asa_abi.method
 def asset_config(
         config_asset: abi.Asset,
         total: abi.Uint64,
@@ -429,28 +480,35 @@ def asset_config(
 
 @smart_asa_abi.method
 def donor_buy_token(
-        payment: abi.PaymentTransaction,
+        payment: abi.AssetTransferTransaction,
         asset_toSend: abi.Asset,
 ) -> Expr:
 
     # Correct asset
     smart_asa_id = App.globalGet(GlobalState.smart_asa_id)
-    correctAsset = asset_toSend.asset_id() == smart_asa_id
+    usdc_id = App.globalGet(GlobalState.usdc_id)
+
+    correct_smart_asa = asset_toSend.asset_id() == smart_asa_id
+    correct_usdc = payment.get().xfer_asset() == usdc_id
 
     # Correct sender and receiver
     sender = payment.get().sender()
     correct_sender = sender == Txn.sender()
-    correct_receiver = payment.get().receiver() == Global.current_application_address()
+    correct_receiver = payment.get().asset_receiver() == Global.current_application_address()
 
     # Role
     sender_is_donor = App.localGet(sender, LocalInts.donor_role) == Int(1)
 
-    amount = payment.get().amount()
+    # TODO: asset amount è in microUSDC. QUindi al momento 100K CRI = 1USDC
+    # Fixabile easy anche da front End. Basta stare attenti e mettere magar
+    # un assert per stare attenti
+    amount = payment.get().asset_amount()
     enough_supply = circulating_supply(smart_asa_id) + amount <= App.globalGet(GlobalState.total)
 
     return Seq(
         Assert(
-            correctAsset,
+            correct_smart_asa,
+            correct_usdc,
             correct_sender,
             correct_receiver,
             sender_is_donor,
@@ -471,20 +529,23 @@ def donor_buy_token(
 
 @smart_asa_abi.method
 def pay_merchant(
-        axfer_asset: abi.Asset,
+        smart_asa: abi.Asset,
+        usdc_asset: abi.Asset,
         asset_amount: abi.Uint64,
         asset_sender: abi.Account,
         asset_receiver: abi.Account
 ) -> Expr:
 
     smart_asa_id = App.globalGet(GlobalState.smart_asa_id)
+    usdc_id = App.globalGet(GlobalState.usdc_id)
 
     sender = asset_sender.address()
     receiver = asset_receiver.address()
     amount = asset_amount.get()
-    asset = axfer_asset.asset_id()
 
-    asset_sent_is_smart_asa = asset == smart_asa_id
+    asset_sent_is_smart_asa = smart_asa.asset_id() == smart_asa_id
+    usdc_to_merchant = usdc_asset.asset_id() == usdc_id
+
     sender_is_donor = App.localGet(sender, LocalInts.donor_role) == Int(1)
     sender_is_redcross = App.localGet(sender, LocalInts.redcross_role) == Int(1)
     receiver_is_merchant = App.localGet(receiver, LocalInts.merchant_role) == Int(1)
@@ -497,11 +558,15 @@ def pay_merchant(
                 sender_is_donor
             ),
             receiver_is_merchant,
-            asset_sent_is_smart_asa
+            asset_sent_is_smart_asa,
+            usdc_to_merchant
         ),
         Assert(sender == Txn.sender()),
 
         # Effects
+
+        #TODO: NON so che fare qua da tenere conto che il buy token (il rpimo dei 3 metodi funzione)
+        # fare un a prova cosi magari va!!! gho messo il 2 sul secondov   
 
         # donor or red_cross send smart-asa to this application
         smart_asa_transfer_inner_txn(
@@ -512,10 +577,11 @@ def pay_merchant(
         ),
 
         # Contract send ALGO to merchant
-        algo_transfer_inner_txn(
+        smart_asa_transfer_inner_txn_2(
+            usdc_id,
             amount,
             Global.current_application_address(),
-            receiver,
+            receiver
         ),
     )
 
@@ -548,7 +614,7 @@ def donation_transfer(
 
         # Effect
 
-        # donor send smart asa to red_cross
+        # Donor send smart asa to red_cross
         smart_asa_transfer_inner_txn(
             smart_asa_id,
             amount,
@@ -557,7 +623,6 @@ def donation_transfer(
         ),
     )
 
-#commento
 
 @smart_asa_abi.method(close_out=CallConfig.ALL)
 def asset_app_closeout(
@@ -765,10 +830,10 @@ approval_program, clear_state_program, contract = smart_asa_abi.compile_program(
 
 if __name__ == "__main__":
 
-    with open("crt_approval.teal", "w") as f:
+    with open("contract/artifacts/crt_approval.teal", "w") as f:
         f.write(approval_program)
 
-    with open("crt_clearstate.teal", "w") as f:
+    with open("contract/artifacts/crt_clearstate.teal", "w") as f:
         f.write(clear_state_program)
 
     network = dict({"TestNet": NetworkInfo(11)})
@@ -779,5 +844,5 @@ if __name__ == "__main__":
         desc=contract.desc,
         networks=network,
     )
-    with open("crt.json", "w") as f:
+    with open("contract/artifacts/crt.json", "w") as f:
         f.write(json.dumps(contract_with_network.dictify(), indent=4))

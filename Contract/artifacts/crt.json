@@ -16,6 +16,18 @@
             }
         },
         {
+            "name": "contract_opt_in_usdc",
+            "args": [
+                {
+                    "type": "asset",
+                    "name": "asset"
+                }
+            ],
+            "returns": {
+                "type": "void"
+            }
+        },
+        {
             "name": "asset_config",
             "args": [
                 {
@@ -71,7 +83,7 @@
             "name": "donor_buy_token",
             "args": [
                 {
-                    "type": "pay",
+                    "type": "axfer",
                     "name": "payment"
                 },
                 {
@@ -88,7 +100,11 @@
             "args": [
                 {
                     "type": "asset",
-                    "name": "axfer_asset"
+                    "name": "smart_asa"
+                },
+                {
+                    "type": "asset",
+                    "name": "usdc_asset"
                 },
                 {
                     "type": "uint64",
