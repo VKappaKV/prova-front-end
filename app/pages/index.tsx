@@ -1,6 +1,7 @@
 import TopNavbar from "@/src/UI/Navbar";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
+import UserInfo from "@/src/UI/UserInfo";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
             gap: "3vh",
           }}
         >
+          <UserInfo/>
           <h1>BENVENUTI SU HELPY </h1>
           <h4>Connetti wallet per iniziare</h4>
         </div>
