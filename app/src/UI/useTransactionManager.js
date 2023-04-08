@@ -66,7 +66,34 @@ export function useMyFunction(){
   
   });
 
-  return { donor_buy_token };
+
+  const pay_merchant = useCallback(async(amount, merchAddr) => {
+    
+    const atc = new algosdk.AtomicTransactionComposer();
+    const sp = await client.getTransactionParams().do();
+    sp.fee = 10;
+
+    const commonParams = {
+      appID: appId,
+      sender: activeAddress,
+      suggestedParams: sp,
+      signer: signer,
+    };
+  
+    atc.addMethodCall({
+      method: getMethodByName("pay_merchant", contract),
+      methodArgs: [assetId, usdc_id, amount, activeAddress, merchAddr],
+      ...commonParams,
+    });
+  
+    const result = await atc.execute(client, 2);
+    for (const idx in result.methodResults) {
+      console.log(result.methodResults[idx]);
+    }
+  
+  });
+
+  return { donor_buy_token, pay_merchant };
 
 }
 
