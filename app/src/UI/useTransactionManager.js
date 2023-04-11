@@ -19,15 +19,13 @@ let appId = 170690461;
 let assetId = 170690482; 
 let usdc_id = 67395862;
 
-import { useCallback } from "react";
-
 export default function useTransactionManager(){
   return 0;
 }
 
 export function useMyFunction(){
 
-  const { activeAddress, signer } = useWalletUI();
+  const { activeAddress, signer, signTransactions, sendTransactions } = useWalletUI();
 
   const donor_buy_token = async (amount) => {
     
@@ -105,10 +103,38 @@ export function useMyFunction(){
     return 0;
   }
 
+  const opt_in = async (asset_id) => {
+
+    const params = await client.getTransactionParams().do();
+    params.fee = 1000;
+    params.flatFee = true;
+  
+    let opttxn = algosdk.makeAssetTransferTxnWithSuggestedParams(
+      activeAddress,
+      activeAddress,
+      undefined,
+      undefined,
+      0,
+      undefined,
+      asset_id,
+      params
+    );
+
+    const encodedTransaction = algosdk.encodeUnsignedTransaction(opttxn);
+    const signedTransactions = await signTransactions([encodedTransaction]);
+
+    const waitRoundsToConfirm = 4
+
+    const { id } = await sendTransactions(signedTransactions, waitRoundsToConfirm)
+
+    console.log('Successfully sent transaction. Transaction ID: ', id)
+    
+  }
 
 
 
-  return { donor_buy_token, pay_merchant, get_asa_balance };
+
+  return { donor_buy_token, pay_merchant, get_asa_balance, opt_in };
 
 }
 
