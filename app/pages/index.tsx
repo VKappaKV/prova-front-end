@@ -1,10 +1,12 @@
 import TopNavbar from "@/src/UI/Navbar";
 import Head from "next/head";
-import ReadContract from "../src/components/ReadContract";
 import styles from "../styles/Home.module.css";
 import UserInfo from "@/src/UI/UserInfo";
+import { Button } from "@mui/material";
+import { useRouter } from "next/router";
 
 export default function Home() {
+  let router = useRouter();
   return (
     <>
       <Head>
@@ -27,7 +29,6 @@ export default function Home() {
           <UserInfo />
           <h1>BENVENUTI SU HELPY </h1>
           <h4>Connetti wallet per iniziare</h4>
-          <ReadContract />
         </div>
       </main>
     </>

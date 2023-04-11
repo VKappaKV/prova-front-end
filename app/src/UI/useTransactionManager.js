@@ -1,34 +1,39 @@
-import { useWalletUI } from "@algoscan/use-wallet-ui";
 import algosdk from "algosdk";
-import crt from '../../../contract/artifacts/crt.json';
+import { useWallet } from "@txnlab/use-wallet";
+import crt from "../../../contract/artifacts/crt.json";
 const fs = require("fs");
 
 //For Purestake
-const algodToken = {
-  'X-API-Key': "dUAm46iRb73HzsHBrEYGr1nVw81Yc0Kp5eiNmZDF"
-}
-const algodServer = 'https://testnet-algorand.api.purestake.io/ps2'
-const algodPort = '';
+/* const algodToken = {
+  "X-API-Key": "dUAm46iRb73HzsHBrEYGr1nVw81Yc0Kp5eiNmZDF",
+};
+const algodServer = "https://testnet-algorand.api.purestake.io/ps2";
+const algodPort = "";
+ */
+//For Algonode
+const algodToken = "";
+const algodServer = "https://testnet-api.algonode.cloud/";
+const algodPort = "";
 
 const client = new algosdk.Algodv2(algodToken, algodServer, algodPort);
 const contract = new algosdk.ABIContract(crt);
 
 // Da compilare dopo step doDeploy
-let smartContractAddress = "NC6BZAISGFL2OXU6FSN7MQH6KOCAKOWUTVLJ32ANJSOKHZTZ6QNBMFP2MU"; 
+let smartContractAddress =
+  "NC6BZAISGFL2OXU6FSN7MQH6KOCAKOWUTVLJ32ANJSOKHZTZ6QNBMFP2MU";
 let appId = 170690461;
-let assetId = 170690482; 
+let assetId = 170690482;
 let usdc_id = 67395862;
 
-export default function useTransactionManager(){
+export default function useTransactionManager() {
   return 0;
 }
 
-export function useMyFunction(){
-
-  const { activeAddress, signer, signTransactions, sendTransactions } = useWalletUI();
+export function useMyFunction() {
+  const { activeAddress, signer, signTransactions, sendTransactions } =
+    useWallet();
 
   const donor_buy_token = async (amount) => {
-    
     const atc = new algosdk.AtomicTransactionComposer();
     const sp = await client.getTransactionParams().do();
     sp.fee = 10;
@@ -39,16 +44,21 @@ export function useMyFunction(){
       suggestedParams: sp,
       signer: signer,
     };
-  
+
     const txn = {
       txn: algosdk.makeAssetTransferTxnWithSuggestedParams(
-        activeAddress, 
-        smartContractAddress, 
-        undefined, undefined,
-        amount, undefined, usdc_id, sp),
-        signer: signer
-      };
-     
+        activeAddress,
+        smartContractAddress,
+        undefined,
+        undefined,
+        amount,
+        undefined,
+        usdc_id,
+        sp
+      ),
+      signer: signer,
+    };
+
     atc.addMethodCall({
       method: getMethodByName("donor_buy_token", contract),
       methodArgs: [txn, assetId],
@@ -61,12 +71,9 @@ export function useMyFunction(){
     }
 
     return result;
-  
   };
 
-
-  const pay_merchant = async(amount, merchAddr) => {
-    
+  const pay_merchant = async (amount, merchAddr) => {
     const atc = new algosdk.AtomicTransactionComposer();
     const sp = await client.getTransactionParams().do();
     sp.fee = 10;
@@ -77,38 +84,36 @@ export function useMyFunction(){
       suggestedParams: sp,
       signer: signer,
     };
-  
+
     atc.addMethodCall({
       method: getMethodByName("pay_merchant", contract),
       methodArgs: [assetId, usdc_id, amount, activeAddress, merchAddr],
       ...commonParams,
     });
-  
+
     const result = await atc.execute(client, 2);
     for (const idx in result.methodResults) {
       console.log(result.methodResults[idx]);
     }
-  
   };
 
-
   const get_asa_balance = async (asset_id) => {
-
-    if(activeAddress){
+    if (activeAddress) {
       const accountInfo = await client.accountInformation(activeAddress).do();
-      const assetHolding = accountInfo.assets.find(asset => asset['asset-id'] === asset_id);
-      const assetBalance = assetHolding.amount;
+      const assetHolding = accountInfo.assets.find(
+        (asset) => asset["asset-id"] === asset_id
+      );
+      const assetBalance = assetHolding ? assetHolding.amount : 0;
       return assetBalance;
     }
     return 0;
-  }
+  };
 
-  const opt_in = async (asset_id) => {
-
+  const opt_in_asa = async (asset_id) => {
     const params = await client.getTransactionParams().do();
     params.fee = 1000;
     params.flatFee = true;
-  
+
     let opttxn = algosdk.makeAssetTransferTxnWithSuggestedParams(
       activeAddress,
       activeAddress,
@@ -123,21 +128,44 @@ export function useMyFunction(){
     const encodedTransaction = algosdk.encodeUnsignedTransaction(opttxn);
     const signedTransactions = await signTransactions([encodedTransaction]);
 
-    const waitRoundsToConfirm = 4
+    const waitRoundsToConfirm = 4;
 
-    const { id } = await sendTransactions(signedTransactions, waitRoundsToConfirm)
+    const { id } = await sendTransactions(
+      signedTransactions,
+      waitRoundsToConfirm
+    );
 
-    console.log('Successfully sent transaction. Transaction ID: ', id)
-    
-  }
+    console.log("Successfully sent transaction. Transaction ID: ", id);
+  };
 
+  const opt_in_app = async () => {
+    const params = await client.getTransactionParams().do();
+    params.fee = 1000;
+    params.flatFee = true;
 
+    let opttxn = algosdk.makeApplicationOptInTxn(activeAddress, params, appId);
 
+    const encodedTransaction = algosdk.encodeUnsignedTransaction(opttxn);
+    const signedTransactions = await signTransactions([encodedTransaction]);
 
-  return { donor_buy_token, pay_merchant, get_asa_balance, opt_in };
+    const waitRoundsToConfirm = 4;
 
+    const { id } = await sendTransactions(
+      signedTransactions,
+      waitRoundsToConfirm
+    );
+
+    console.log("Successfully sent transaction. Transaction ID: ", id);
+  };
+
+  return {
+    donor_buy_token,
+    pay_merchant,
+    get_asa_balance,
+    opt_in_asa,
+    opt_in_app,
+  };
 }
-
 
 function getMethodByName(name, contract) {
   const m = contract.methods.find((mt) => {
@@ -146,5 +174,3 @@ function getMethodByName(name, contract) {
   if (m === undefined) throw Error("Method undefined: " + name);
   return m;
 }
-
-

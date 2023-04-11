@@ -7,8 +7,13 @@ let assetId = 170690482;
 let usdc_id = 67395862;
 
 export default function UserInfo() {
-  const { donor_buy_token, pay_merchant, get_asa_balance, opt_in } =
-    useMyFunction();
+  const {
+    donor_buy_token,
+    pay_merchant,
+    get_asa_balance,
+    opt_in_asa,
+    opt_in_app,
+  } = useMyFunction();
   const { activeAddress } = useWalletUI();
   const [asa_balance, set_asa_balance] = useState(0);
   const [usdc_balance, set_usdc_balance] = useState(0);
@@ -36,14 +41,18 @@ export default function UserInfo() {
   };
 
   const opt_in_call = (asa: number) => {
-    opt_in(asa).then(() => console.log("eseguito"));
+    opt_in_asa(asa).then(() => console.log("eseguito"));
+  };
+
+  const opt_in_app_call = () => {
+    opt_in_app().then(() => console.log("eseguito"));
   };
 
   return (
     <>
       <p>My address: {activeAddress}</p>
       <p>Smart Asa Balance: {asa_balance}</p>
-      <p>USDC Balance: {usdc_balance}</p>
+      <p>USDC Balance: {usdc_balance / 1000000}</p>
 
       <Button variant="contained" onClick={donor_buy_token_call}>
         {" Donor buy token"}
@@ -56,6 +65,9 @@ export default function UserInfo() {
       </Button>
       <Button variant="contained" onClick={opt_in_call.bind(null, assetId)}>
         {" OptIn Smart ASA"}
+      </Button>
+      <Button variant="contained" onClick={opt_in_app_call}>
+        {" OptIn App"}
       </Button>
     </>
   );

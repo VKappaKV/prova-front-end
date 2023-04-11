@@ -4,6 +4,7 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { WalletUI } from "@algoscan/use-wallet-ui";
+import Connect from "../components/Wallet/Connect";
 
 function TopNavbar() {
   return (
@@ -29,11 +30,13 @@ function TopNavbar() {
               </NavDropdown>
             </Nav>
         </Navbar.Collapse> */}
-        <WalletUI
+        {/* <WalletUI
           primary="red"
           textColor="#FF0000"
           backgroundColor="translucent"
-        />
+          openState={false}
+        /> */}
+        <Connect />
       </Container>
     </Navbar>
   );

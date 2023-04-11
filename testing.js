@@ -12,11 +12,10 @@ const algodPort = 4001;*/
 
 //For Purestake
 const algodToken = {
-  'X-API-Key': "dUAm46iRb73HzsHBrEYGr1nVw81Yc0Kp5eiNmZDF"
-}
-const algodServer = 'https://testnet-algorand.api.purestake.io/ps2'
-const algodPort = '';
-
+  "X-API-Key": "dUAm46iRb73HzsHBrEYGr1nVw81Yc0Kp5eiNmZDF",
+};
+const algodServer = "https://testnet-algorand.api.purestake.io/ps2";
+const algodPort = "";
 
 const client = new algosdk.Algodv2(algodToken, algodServer, algodPort);
 
@@ -27,17 +26,20 @@ const clearStatePath = "contract/artifacts/crt_clearstate.teal";
 // The accounts below should be generated with the createAccount() function
 
 // Creator account
-const mnenonic ="cheese enter impact deliver media side youth skill easy school renew spice detect apple blouse focus undo knee okay liquid robust invite twice absent shield";
+const mnenonic =
+  "cheese enter impact deliver media side youth skill easy school renew spice detect apple blouse focus undo knee okay liquid robust invite twice absent shield";
 const account = algosdk.mnemonicToSecretKey(mnenonic);
 const accAdd = "2WKBPFJNWGMOENUBNWD7JY2CXE2RAVSL5EI6NULZZWTZ5FH5TWETB5EPPQ";
 
-// Merchant account: 
-const merchMnemonic = "trumpet canal siege hip what adjust silk clarify foot siege limb clinic dismiss leopard region resemble solution owner nurse confirm video eyebrow small abandon online";
+// Merchant account:
+const merchMnemonic =
+  "trumpet canal siege hip what adjust silk clarify foot siege limb clinic dismiss leopard region resemble solution owner nurse confirm video eyebrow small abandon online";
 const merchAccount = algosdk.mnemonicToSecretKey(merchMnemonic);
 const merchAddr = "MSHIHS7AHBMSJOXN2HWJTANMUCWSRLAHGLJVHVXDACRFV4JBSJYV7G5ZKU";
 
-// CRI account: 
-const CriMnemonic = "strike two seven agent rifle paddle direct hurdle control trigger bacon proud ugly inflict enforce tent giggle journey arrive business color coyote chase above solid";
+// CRI account:
+const CriMnemonic =
+  "strike two seven agent rifle paddle direct hurdle control trigger bacon proud ugly inflict enforce tent giggle journey arrive business color coyote chase above solid";
 const CriAccount = algosdk.mnemonicToSecretKey(CriMnemonic);
 const CriAddr = "TBB76BCKOQUEZ2INFYIKCWI7UQYPJ33Y4TMVMAYPURPLAGIBFKCHVBC5L4";
 
@@ -45,47 +47,44 @@ const CriAddr = "TBB76BCKOQUEZ2INFYIKCWI7UQYPJ33Y4TMVMAYPURPLAGIBFKCHVBC5L4";
 let usdc_id = 67395862;
 
 // Da compilare dopo step doDeploy
-let smartContractAddress = "NC6BZAISGFL2OXU6FSN7MQH6KOCAKOWUTVLJ32ANJSOKHZTZ6QNBMFP2MU"; 
+let smartContractAddress =
+  "NC6BZAISGFL2OXU6FSN7MQH6KOCAKOWUTVLJ32ANJSOKHZTZ6QNBMFP2MU";
 let appId = 170690461;
 
 // Da compilare dopo step doStartingTasks
-let assetId = 170690482; 
+let assetId = 170690482;
 
-
-// Steps: 
+// Steps:
 let doDeploy = false; //deploy
-let updateContract = true; //update
+let updateContract = false; //update
 
 let doStartingTasks = false; // fund the contract and asset creation
-let doContractUsdcOptIn = false; 
+let doContractUsdcOptIn = false;
 let doOptInAndAssignRole = false; // creator opt-in into app and ASA
 let buyToken = false; //creator buy smart ASA using ALGO
 let payMerchant_ = false; // Creator pay a merchant using smart ASA
 let donor_transfer = false; // Transfer from creator to CRI
 
 main();
+assign_donor_role();
 
 async function main() {
-
   console.log("start");
 
   if (doDeploy) {
-
     appId = await deploy();
 
     console.log("App created with appId: " + appId);
     smartContractAddress = algosdk.getApplicationAddress(appId);
     console.log("Application address: " + smartContractAddress);
-
   }
 
-  if(updateContract){
+  if (updateContract) {
     await update_contract();
     console.log("Update done!");
   }
 
-  if(doStartingTasks){
-
+  if (doStartingTasks) {
     // Transfer Algo to SC account
     await algoTranfer(account, smartContractAddress, 1000000); //1 ALGO
 
@@ -95,7 +94,6 @@ async function main() {
   }
 
   if (doOptInAndAssignRole) {
-
     // Opt-in
     await assetOptIn(account, assetId);
     await appOptIn(account, appId);
@@ -108,19 +106,18 @@ async function main() {
     await assetOptIn(CriAccount, assetId);
     await appOptIn(CriAccount, appId);
     console.log("CRI optins done");
- 
+
     // Assign roles
-   
+
     await assign_donor_role();
     console.log("Donor role assigned");
     await assign_merch_role();
     console.log("Merchant role assigned");
     await assign_redcross_role();
     console.log("RCI role assigned");
- 
   }
 
-  if(doContractUsdcOptIn){
+  if (doContractUsdcOptIn) {
     await contract_opt_in_usdc();
   }
 
@@ -137,7 +134,6 @@ async function main() {
   }
 
   console.log("END");
-
 }
 
 async function deploy() {
@@ -225,13 +221,12 @@ async function update_contract() {
     Buffer.from(compiledClearState.result, "base64")
   );
 
-
   let appUpdateTxn = algosdk.makeApplicationUpdateTxnFromObject({
     from: accAdd,
     suggestedParams: params,
     appIndex: appId,
     approvalProgram: codificatoApproval,
-    clearProgram: codificatoClear
+    clearProgram: codificatoClear,
   });
 
   let txId = appUpdateTxn.txID().toString();
@@ -252,9 +247,7 @@ async function update_contract() {
       " confirmed in round " +
       confirmedTxn["confirmed-round"]
   );
-
 }
-
 
 async function assetCreateMethod() {
   const atc = new algosdk.AtomicTransactionComposer();
@@ -297,9 +290,7 @@ async function assetCreateMethod() {
   return 0;
 }
 
-
 async function algoTranfer(sender, receiver, amount) {
-
   let params = await client.getTransactionParams().do();
   // comment out the next two lines to use suggested fee
   params.fee = algosdk.ALGORAND_MIN_TX_FEE;
@@ -400,7 +391,12 @@ async function assign_donor_role() {
 
   atc.addMethodCall({
     method: getMethodByName("set_donor_role", contract),
-    methodArgs: [account.addr, true],
+    //methodArgs: [account.addr, true],
+    methodArgs: [
+      "U45OH5J2KLOBOQ5BF47ZOUFWJPR6YVKVSPRL4QIDL2TBGKE47QW4OXPADY",
+      true,
+    ],
+
     ...commonParams,
   });
 
@@ -490,10 +486,15 @@ async function donor_buy_token() {
       ...sp,
     }),*/
     txn: algosdk.makeAssetTransferTxnWithSuggestedParams(
-        account.addr, 
-        smartContractAddress, 
-        undefined, undefined,
-        1, undefined, usdc_id, sp),
+      account.addr,
+      smartContractAddress,
+      undefined,
+      undefined,
+      1,
+      undefined,
+      usdc_id,
+      sp
+    ),
 
     signer: algosdk.makeBasicAccountTransactionSigner(account),
   };
@@ -573,37 +574,36 @@ async function donor_transfer_asa() {
 
 // Utility function to return an ABIMethod by its name
 function getMethodByName(name, contract) {
-    const m = contract.methods.find((mt) => {
-      return mt.name == name;
-    });
-    if (m === undefined) throw Error("Method undefined: " + name);
-    return m;
-  }
+  const m = contract.methods.find((mt) => {
+    return mt.name == name;
+  });
+  if (m === undefined) throw Error("Method undefined: " + name);
+  return m;
+}
 
+async function contract_opt_in_usdc() {
+  const atc = new algosdk.AtomicTransactionComposer();
 
-  async function contract_opt_in_usdc() {
-    const atc = new algosdk.AtomicTransactionComposer();
-  
-    const sp = await client.getTransactionParams().do();
-    sp.fee = 10;
-  
-    const buff = fs.readFileSync(jsonPath);
-    const contract = new algosdk.ABIContract(JSON.parse(buff.toString()));
-    const commonParams = {
-      appID: appId,
-      sender: account.addr,
-      suggestedParams: sp,
-      signer: algosdk.makeBasicAccountTransactionSigner(account),
-    };
-  
-    atc.addMethodCall({
-      method: getMethodByName("contract_opt_in_usdc", contract),
-      methodArgs: [usdc_id],
-      ...commonParams,
-    });
-  
-    const result = await atc.execute(client, 2);
-    for (const idx in result.methodResults) {
-      console.log(result.methodResults[idx]);
-    }
+  const sp = await client.getTransactionParams().do();
+  sp.fee = 10;
+
+  const buff = fs.readFileSync(jsonPath);
+  const contract = new algosdk.ABIContract(JSON.parse(buff.toString()));
+  const commonParams = {
+    appID: appId,
+    sender: account.addr,
+    suggestedParams: sp,
+    signer: algosdk.makeBasicAccountTransactionSigner(account),
+  };
+
+  atc.addMethodCall({
+    method: getMethodByName("contract_opt_in_usdc", contract),
+    methodArgs: [usdc_id],
+    ...commonParams,
+  });
+
+  const result = await atc.execute(client, 2);
+  for (const idx in result.methodResults) {
+    console.log(result.methodResults[idx]);
   }
+}
