@@ -54,10 +54,12 @@ let assetId = 170690482;
 
 // Steps: 
 let doDeploy = false; //deploy
+let updateContract = true; //update
+
 let doStartingTasks = false; // fund the contract and asset creation
 let doContractUsdcOptIn = false; 
 let doOptInAndAssignRole = false; // creator opt-in into app and ASA
-let buyToken = true; //creator buy smart ASA using ALGO
+let buyToken = false; //creator buy smart ASA using ALGO
 let payMerchant_ = false; // Creator pay a merchant using smart ASA
 let donor_transfer = false; // Transfer from creator to CRI
 
@@ -75,6 +77,11 @@ async function main() {
     smartContractAddress = algosdk.getApplicationAddress(appId);
     console.log("Application address: " + smartContractAddress);
 
+  }
+
+  if(updateContract){
+    await update_contract();
+    console.log("Update done!");
   }
 
   if(doStartingTasks){
@@ -200,6 +207,54 @@ async function deploy() {
 
   return appId;
 }
+
+async function update_contract() {
+  // get node suggested parameters
+  let params = await client.getTransactionParams().do();
+
+  const approvalProgram = fs.readFileSync(approvalPath).toString();
+  const clearStateProgram = fs.readFileSync(clearStatePath).toString();
+
+  const compiledApprovalProgram = await client.compile(approvalProgram).do();
+  const compiledClearState = await client.compile(clearStateProgram).do();
+
+  const codificatoApproval = new Uint8Array(
+    Buffer.from(compiledApprovalProgram.result, "base64")
+  );
+  const codificatoClear = new Uint8Array(
+    Buffer.from(compiledClearState.result, "base64")
+  );
+
+
+  let appUpdateTxn = algosdk.makeApplicationUpdateTxnFromObject({
+    from: accAdd,
+    suggestedParams: params,
+    appIndex: appId,
+    approvalProgram: codificatoApproval,
+    clearProgram: codificatoClear
+  });
+
+  let txId = appUpdateTxn.txID().toString();
+
+  // Sign the transaction
+  let signedTxn = appUpdateTxn.signTxn(account.sk);
+  console.log("Signed transaction with txID: %s", txId);
+
+  // Submit the transaction
+  await client.sendRawTransaction(signedTxn).do();
+
+  // Wait for transaction to be confirmed
+  confirmedTxn = await algosdk.waitForConfirmation(client, txId, 4);
+  //Get the completed Transaction
+  console.log(
+    "Transaction " +
+      txId +
+      " confirmed in round " +
+      confirmedTxn["confirmed-round"]
+  );
+
+}
+
 
 async function assetCreateMethod() {
   const atc = new algosdk.AtomicTransactionComposer();
