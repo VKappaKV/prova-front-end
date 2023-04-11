@@ -29,7 +29,7 @@ export function useMyFunction(){
 
   const { activeAddress, signer } = useWalletUI();
 
-  const donor_buy_token = useCallback(async(amount) => {
+  const donor_buy_token = async (amount) => {
     
     const atc = new algosdk.AtomicTransactionComposer();
     const sp = await client.getTransactionParams().do();
@@ -64,10 +64,10 @@ export function useMyFunction(){
 
     return result;
   
-  });
+  };
 
 
-  const pay_merchant = useCallback(async(amount, merchAddr) => {
+  const pay_merchant = async(amount, merchAddr) => {
     
     const atc = new algosdk.AtomicTransactionComposer();
     const sp = await client.getTransactionParams().do();
@@ -91,7 +91,7 @@ export function useMyFunction(){
       console.log(result.methodResults[idx]);
     }
   
-  });
+  };
 
   return { donor_buy_token, pay_merchant };
 
