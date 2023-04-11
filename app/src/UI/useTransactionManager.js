@@ -93,7 +93,22 @@ export function useMyFunction(){
   
   };
 
-  return { donor_buy_token, pay_merchant };
+
+  const get_asa_balance = async (asset_id) => {
+
+    if(activeAddress){
+      const accountInfo = await client.accountInformation(activeAddress).do();
+      const assetHolding = accountInfo.assets.find(asset => asset['asset-id'] === asset_id);
+      const assetBalance = assetHolding.amount;
+      return assetBalance;
+    }
+    return 0;
+  }
+
+
+
+
+  return { donor_buy_token, pay_merchant, get_asa_balance };
 
 }
 
