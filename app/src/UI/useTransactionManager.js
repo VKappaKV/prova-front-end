@@ -1,6 +1,7 @@
 import algosdk from "algosdk";
 import { useWallet } from "@txnlab/use-wallet";
 import crt from "../../../contract/artifacts/crt.json";
+import { useWalletUI } from "@algoscan/use-wallet-ui";
 const fs = require("fs");
 
 //For Purestake
@@ -36,7 +37,8 @@ export function useMyFunction() {
   const donor_buy_token = async (amount) => {
     const atc = new algosdk.AtomicTransactionComposer();
     const sp = await client.getTransactionParams().do();
-    sp.fee = 10;
+    sp.fee = 3000;
+    sp.flatFee = true;
 
     const commonParams = {
       appID: appId,
@@ -76,7 +78,8 @@ export function useMyFunction() {
   const pay_merchant = async (amount, merchAddr) => {
     const atc = new algosdk.AtomicTransactionComposer();
     const sp = await client.getTransactionParams().do();
-    sp.fee = 10;
+    sp.fee = 3000;
+    sp.flatFee = true;
 
     const commonParams = {
       appID: appId,

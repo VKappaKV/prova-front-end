@@ -1,7 +1,6 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 
-import { WalletUIProvider } from "@algoscan/use-wallet-ui";
 import { SSRProvider } from "react-bootstrap";
 import { useEffect } from "react";
 

@@ -30,12 +30,6 @@ function TopNavbar() {
               </NavDropdown>
             </Nav>
         </Navbar.Collapse> */}
-        {/* <WalletUI
-          primary="red"
-          textColor="#FF0000"
-          backgroundColor="translucent"
-          openState={false}
-        /> */}
         <Connect />
       </Container>
     </Navbar>
