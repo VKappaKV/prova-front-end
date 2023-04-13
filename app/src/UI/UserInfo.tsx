@@ -63,7 +63,7 @@ export default function UserInfo() {
       <p>Smart Asa Balance: {activeAccount ? asa_balance : null}</p>
       <p>USDC Balance: {activeAccount ? usdc_balance / 1000000 : null}</p>
 
-      <Button variant="contained" onClick={donor_buy_token_call}>
+      {/* <Button variant="contained" onClick={donor_buy_token_call}>
         {" Donor buy token"}
       </Button>
       <Button variant="contained" onClick={pay_merchant_call}>
@@ -77,7 +77,7 @@ export default function UserInfo() {
       </Button>
       <Button variant="contained" onClick={opt_in_app_call}>
         {" OptIn App"}
-      </Button>
+      </Button> */}
     </>
   );
 }

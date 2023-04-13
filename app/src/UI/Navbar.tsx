@@ -3,7 +3,6 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { WalletUI } from "@algoscan/use-wallet-ui";
 import Connect from "../components/Wallet/Connect";
 
 function TopNavbar() {

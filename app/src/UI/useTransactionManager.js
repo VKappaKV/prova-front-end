@@ -34,6 +34,31 @@ export function useMyFunction() {
   const { activeAddress, signer, signTransactions, sendTransactions } =
     useWallet();
 
+  const account_is_donor = async () => {
+    const accountInfoObj = await client
+      .accountApplicationInformation(activeAddress, appId)
+      .do();
+    const localState = accountInfoObj["app-local-state"]["key-value"][0];
+    console.log(`Raw local state - ${JSON.stringify(accountInfoObj)}`);
+    const localKey = Buffer.from(localState.key, "base64").toString();
+    // get uint value directly
+    const localValue = localState.value.uint;
+
+    console.log(`Decoded local state - ${localKey}: ${localValue}`);
+    const check_Local_State = localValue == 1 ? true : false;
+
+    const accountInfo = await client.accountInformation(activeAddress).do();
+    console.log(`Raw local state - ${JSON.stringify(accountInfo)}`);
+    const check_ASA_optIn = accountInfo.assets.some(
+      (asset) => asset["asset-id"] === assetId
+    );
+    const check_App_optIn = accountInfo["apps-local-state"].some(
+      (app) => app.id === appId
+    );
+
+    return check_Local_State && check_ASA_optIn && check_App_optIn;
+  };
+
   const donor_buy_token = async (amount) => {
     const atc = new algosdk.AtomicTransactionComposer();
     const sp = await client.getTransactionParams().do();
@@ -167,6 +192,7 @@ export function useMyFunction() {
     get_asa_balance,
     opt_in_asa,
     opt_in_app,
+    account_is_donor,
   };
 }
 
