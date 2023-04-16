@@ -46,11 +46,11 @@ export default function Home() {
   }
 
   const checkAllDonorParams = async () => {
-    const Params = await account_is_donor().catch((e) => {
+    const params = await account_is_donor().catch((e) => {
       console.log("errore: ", e);
       return [false, false, false];
-    }); // Params[0]: Local State "donor_role"; Params[1]: ASA opt-in; Params[2]: App opt-in
-    const checkParams = Params[0] && Params[1] && Params[2];
+    }); // Params[0]: App opt-in ; Params[1]: ASA opt-in; Params[2]: Local State "donor_role"
+    const checkParams = params[0] && params[1] && params[2];
     if (checkParams) {
       setAccountIsDonor(true);
     }
@@ -108,9 +108,9 @@ export default function Home() {
             <Tag
               condition={accountHasUSDC && !!activeAccount}
               valueToShow="2. Load up USDC"
-              onClick={() =>
-                openLinkInNewTab("https://testnet.folks.finance/faucet")
-              }
+              onClick={() => {
+                openLinkInNewTab("https://testnet.folks.finance/faucet");
+              }}
               disabled={false}
             />
             <Tag
@@ -145,7 +145,7 @@ const BuyToken: React.FC<BuyTokenProps> = ({
   handlerFunction,
 }) => {
   const handleSliderButtonClick = (value: number) => {
-    handlerFunction(value);
+    handlerFunction(value * 1_000_000);
   };
 
   return (

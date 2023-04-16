@@ -58,7 +58,7 @@ export function useMyFunction() {
     console.log(`Decoded local state - ${localKey}: ${localValue}`);
     const check_Local_State = localValue == 1 ? true : false;
 
-    return [check_Local_State, check_ASA_optIn, check_App_optIn];
+    return [check_App_optIn, check_ASA_optIn, check_Local_State];
   };
 
   const set_account_as_donor = async () => {
@@ -77,7 +77,7 @@ export function useMyFunction() {
     params_status.forEach((param, index) => {
       if (!param) {
         switch (index) {
-          case 0:
+          case 2:
             atc.addMethodCall({
               method: getMethodByName("set_donor_role", contract),
               methodArgs: [activeAddress, true],
@@ -95,15 +95,15 @@ export function useMyFunction() {
               assetId,
               sp
             );
-            atc.addTransaction({ txn: txn_ASA, signer: activeAddress });
+            atc.addTransaction({ txn: txn_ASA, signer: signer });
             break;
-          case 2:
+          case 0:
             let txn_App = algosdk.makeApplicationOptInTxn(
               activeAddress,
               sp,
               appId
             );
-            atc.addTransaction({ txn: txn_App, signer: activeAddress });
+            atc.addTransaction({ txn: txn_App, signer: signer });
             break;
         }
       }
@@ -140,6 +140,7 @@ export function useMyFunction() {
       ),
       signer: signer,
     };
+    console.log("amount da trasferire: ", amount);
 
     atc.addMethodCall({
       method: getMethodByName("donor_buy_token", contract),

@@ -56,7 +56,7 @@ let assetId = 170690482;
 
 // Steps:
 let doDeploy = false; //deploy
-let updateContract = false; //update
+let updateContract = true; //update
 
 let doStartingTasks = false; // fund the contract and asset creation
 let doContractUsdcOptIn = false;
@@ -66,7 +66,6 @@ let payMerchant_ = false; // Creator pay a merchant using smart ASA
 let donor_transfer = false; // Transfer from creator to CRI
 
 main();
-assign_donor_role();
 
 async function main() {
   console.log("start");
