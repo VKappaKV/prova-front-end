@@ -393,7 +393,7 @@ async function assign_donor_role() {
     method: getMethodByName("set_donor_role", contract),
     //methodArgs: [account.addr, true],
     methodArgs: [
-      "U45OH5J2KLOBOQ5BF47ZOUFWJPR6YVKVSPRL4QIDL2TBGKE47QW4OXPADY",
+      //  "U45OH5J2KLOBOQ5BF47ZOUFWJPR6YVKVSPRL4QIDL2TBGKE47QW4OXPADY",
       true,
     ],
 

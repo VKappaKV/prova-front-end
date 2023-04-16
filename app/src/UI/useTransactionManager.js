@@ -35,18 +35,6 @@ export function useMyFunction() {
     useWallet();
 
   const account_is_donor = async () => {
-    const accountInfoObj = await client
-      .accountApplicationInformation(activeAddress, appId)
-      .do();
-    const localState = accountInfoObj["app-local-state"]["key-value"][0];
-    console.log(`Raw local state - ${JSON.stringify(accountInfoObj)}`);
-    const localKey = Buffer.from(localState.key, "base64").toString();
-    // get uint value directly
-    const localValue = localState.value.uint;
-
-    console.log(`Decoded local state - ${localKey}: ${localValue}`);
-    const check_Local_State = localValue == 1 ? true : false;
-
     const accountInfo = await client.accountInformation(activeAddress).do();
     console.log(`Raw local state - ${JSON.stringify(accountInfo)}`);
     const check_ASA_optIn = accountInfo.assets.some(
@@ -56,7 +44,74 @@ export function useMyFunction() {
       (app) => app.id === appId
     );
 
-    return check_Local_State && check_ASA_optIn && check_App_optIn;
+    if (!check_ASA_optIn && !check_App_optIn) return [false, false, false];
+
+    const accountInfoOfAppObj = await client
+      .accountApplicationInformation(activeAddress, appId)
+      .do();
+    const localState = accountInfoOfAppObj["app-local-state"]["key-value"][0];
+    console.log(`Raw local state - ${JSON.stringify(accountInfoOfAppObj)}`);
+    const localKey = Buffer.from(localState.key, "base64").toString();
+    // get uint value directly
+    const localValue = localState.value.uint;
+
+    console.log(`Decoded local state - ${localKey}: ${localValue}`);
+    const check_Local_State = localValue == 1 ? true : false;
+
+    return [check_Local_State, check_ASA_optIn, check_App_optIn];
+  };
+
+  const set_account_as_donor = async () => {
+    const atc = new algosdk.AtomicTransactionComposer();
+    const sp = await client.getTransactionParams().do();
+    sp.flatFee = true;
+    sp.fee = 1000;
+    const commonParams = {
+      appID: appId,
+      sender: activeAddress,
+      suggestedParams: sp,
+      signer: signer,
+    };
+
+    const params_status = await account_is_donor();
+    params_status.forEach((param, index) => {
+      if (!param) {
+        switch (index) {
+          case 0:
+            atc.addMethodCall({
+              method: getMethodByName("set_donor_role", contract),
+              methodArgs: [activeAddress, true],
+              ...commonParams,
+            });
+            break;
+          case 1:
+            let txn_ASA = algosdk.makeAssetTransferTxnWithSuggestedParams(
+              activeAddress,
+              activeAddress,
+              undefined,
+              undefined,
+              0,
+              undefined,
+              assetId,
+              sp
+            );
+            atc.addTransaction({ txn: txn_ASA, signer: activeAddress });
+            break;
+          case 2:
+            let txn_App = algosdk.makeApplicationOptInTxn(
+              activeAddress,
+              sp,
+              appId
+            );
+            atc.addTransaction({ txn: txn_App, signer: activeAddress });
+            break;
+        }
+      }
+    });
+    const result = await atc.execute(client, 2);
+    for (const idx in result.methodResults) {
+      console.log(result.methodResults[idx]);
+    }
   };
 
   const donor_buy_token = async (amount) => {
@@ -193,6 +248,7 @@ export function useMyFunction() {
     opt_in_asa,
     opt_in_app,
     account_is_donor,
+    set_account_as_donor,
   };
 }
 

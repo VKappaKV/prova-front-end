@@ -196,14 +196,14 @@ def smart_asa_transfer_inner_txn(
                 TxnField.type_enum: TxnType.AssetTransfer,
                 TxnField.xfer_asset: smart_asa_id,
                 TxnField.asset_amount: asset_amount, 
-                TxnField.asset_sender: asset_sender,  
+                TxnField.sender: asset_sender,  
                 TxnField.asset_receiver: asset_receiver,
             }
         ),
         InnerTxnBuilder.Submit(),
     )
 
-#TODO: capire perche questo funziona !
+""" #TODO: capire perche questo funziona !
 @Subroutine(TealType.none)
 def smart_asa_transfer_inner_txn_2(
         smart_asa_id: Expr,
@@ -225,7 +225,7 @@ def smart_asa_transfer_inner_txn_2(
         ),
         InnerTxnBuilder.Submit(),
     )
-
+ """
 
 def contract_asa_opt_in_txn(
         asa_id: Expr,
@@ -327,7 +327,7 @@ def asset_app_create() -> Expr:
 
 
 smart_asa_abi = Router(
-    "Smart ASA ref. implementation",
+    "Smart ASA for Role Based Txn",
     BareCallActions(
         no_op=OnCompleteAction.create_only(asset_app_create()),
         update_application=OnCompleteAction.always(Approve()), 
@@ -499,10 +499,10 @@ def donor_buy_token(
     # Role
     sender_is_donor = App.localGet(sender, LocalInts.donor_role) == Int(1)
 
-    # TODO: asset amount è in microUSDC. QUindi al momento 100K CRI = 1USDC
+    # TODO: asset amount è in microUSDC. Quindi al momento 100K CRI = 1USDC
     # Fixabile easy anche da front End. Basta stare attenti e mettere magar
     # un assert per stare attenti
-    amount = payment.get().asset_amount()
+    amount = payment.get().asset_amount() / Int(100_000)
     enough_supply = circulating_supply(smart_asa_id) + amount <= App.globalGet(GlobalState.total)
 
     return Seq(
@@ -541,7 +541,7 @@ def pay_merchant(
 
     sender = asset_sender.address()
     receiver = asset_receiver.address()
-    amount = asset_amount.get()
+    amount = asset_amount.get() * Int(100_000)
 
     asset_sent_is_smart_asa = smart_asa.asset_id() == smart_asa_id
     usdc_to_merchant = usdc_asset.asset_id() == usdc_id
@@ -577,7 +577,7 @@ def pay_merchant(
         ),
 
         # Contract send ALGO to merchant
-        smart_asa_transfer_inner_txn_2(
+        smart_asa_transfer_inner_txn(
             usdc_id,
             amount,
             Global.current_application_address(),
@@ -711,10 +711,7 @@ def set_redcross_role(account: abi.Account) -> Expr:
 
 @smart_asa_abi.method
 def set_donor_role(account: abi.Account, is_donor: abi.Bool) -> Expr:
-    current_manager_addr = App.globalGet(GlobalState.manager_addr)
-    is_manager_addr = Txn.sender() == current_manager_addr
     return Seq(
-        Assert(is_manager_addr),
         If(
             is_donor.get() == Int(1)
         ).Then(

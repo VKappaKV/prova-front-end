@@ -1,5 +1,5 @@
 {
-    "name": "Smart ASA ref. implementation",
+    "name": "Smart ASA for Role Based Txn",
     "methods": [
         {
             "name": "test",

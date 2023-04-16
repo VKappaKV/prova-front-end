@@ -7,6 +7,7 @@ import { useWallet } from "@txnlab/use-wallet";
 import Tag from "@/src/UI/Tag";
 import { useEffect, useState } from "react";
 import { useMyFunction } from "@/src/UI/useTransactionManager";
+import SliderWithButton from "@/src/UI/Slider";
 
 let assetId = 170690482;
 let usdc_id = 67395862;
@@ -18,6 +19,7 @@ export default function Home() {
     get_asa_balance,
     opt_in_asa,
     opt_in_app,
+    set_account_as_donor,
     account_is_donor,
   } = useMyFunction();
   const pera = providers?.at(0);
@@ -26,21 +28,12 @@ export default function Home() {
   const [usdc_balance, set_usdc_balance] = useState(0);
   const [accountHasUSDC, setAccountHasUSDC] = useState(false);
   const [accountIsDonor, setAccountIsDonor] = useState(false);
-  const [open, setOpen] = useState(false);
 
   function openLinkInNewTab(url: string) {
     if (typeof window !== "undefined") {
       window.open(url, "_blank");
     }
   }
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   async function fetchData() {
     let response = await get_asa_balance(assetId);
@@ -53,7 +46,11 @@ export default function Home() {
   }
 
   const checkAllDonorParams = async () => {
-    const checkParams = await account_is_donor();
+    const Params = await account_is_donor().catch((e) => {
+      console.log("errore: ", e);
+      return [false, false, false];
+    }); // Params[0]: Local State "donor_role"; Params[1]: ASA opt-in; Params[2]: App opt-in
+    const checkParams = Params[0] && Params[1] && Params[2];
     if (checkParams) {
       setAccountIsDonor(true);
     }
@@ -119,19 +116,46 @@ export default function Home() {
             <Tag
               condition={accountIsDonor && !!activeAccount}
               valueToShow="3. Become donor"
-              disabled={false}
-            />
-            <Tag
-              condition={false && !!activeAccount}
-              valueToShow="4. Buy CRI token"
-              onClick={handleOpen}
-              disabled={false}
+              disabled={accountIsDonor}
+              onClick={set_account_as_donor}
             />
           </div>
-
-          {/* <UserInfo /> */}
+          {!!activeAccount && accountIsDonor ? (
+            <BuyToken
+              minValue={0}
+              maxValue={usdc_balance}
+              handlerFunction={donor_buy_token}
+            />
+          ) : null}
         </div>
       </main>
     </>
   );
 }
+
+interface BuyTokenProps {
+  minValue: number;
+  maxValue: number;
+  handlerFunction: (value: number) => void;
+}
+
+const BuyToken: React.FC<BuyTokenProps> = ({
+  minValue,
+  maxValue,
+  handlerFunction,
+}) => {
+  const handleSliderButtonClick = (value: number) => {
+    handlerFunction(value);
+  };
+
+  return (
+    <div>
+      <SliderWithButton
+        handlerFunction={handleSliderButtonClick}
+        minValue={minValue}
+        maxValue={maxValue / 1_000_000}
+        buttonText="BUY CRI TOKEN"
+      />
+    </div>
+  );
+};

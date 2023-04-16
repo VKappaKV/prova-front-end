@@ -88,7 +88,7 @@ assert
 txna ApplicationArgs 1
 int 0
 getbyte
-callsub getassetconfig_28
+callsub getassetconfig_27
 store 35
 byte 0x151f7c75
 load 35
@@ -108,7 +108,7 @@ assert
 txna ApplicationArgs 1
 int 0
 getbyte
-callsub getoptinminbalance_27
+callsub getoptinminbalance_26
 store 34
 byte 0x151f7c75
 load 34
@@ -129,7 +129,7 @@ assert
 txna ApplicationArgs 1
 int 0
 getbyte
-callsub getcirculatingsupply_26
+callsub getcirculatingsupply_25
 store 32
 byte 0x151f7c75
 load 32
@@ -148,7 +148,7 @@ int 0
 &&
 assert
 txna ApplicationArgs 1
-callsub getismerchant_25
+callsub getismerchant_24
 store 31
 byte 0x151f7c75
 byte 0x00
@@ -169,7 +169,7 @@ int 0
 &&
 assert
 txna ApplicationArgs 1
-callsub getisdonor_24
+callsub getisdonor_23
 store 30
 byte 0x151f7c75
 byte 0x00
@@ -190,7 +190,7 @@ int 0
 &&
 assert
 txna ApplicationArgs 1
-callsub getisworker_23
+callsub getisworker_22
 store 29
 byte 0x151f7c75
 byte 0x00
@@ -222,7 +222,7 @@ getbit
 store 28
 load 27
 load 28
-callsub setmerchantrole_22
+callsub setmerchantrole_21
 int 1
 return
 main_l27:
@@ -246,7 +246,7 @@ getbit
 store 26
 load 25
 load 26
-callsub setdonorrole_21
+callsub setdonorrole_20
 int 1
 return
 main_l28:
@@ -261,7 +261,7 @@ assert
 txna ApplicationArgs 1
 int 0
 getbyte
-callsub setredcrossrole_20
+callsub setredcrossrole_19
 int 1
 return
 main_l29:
@@ -276,7 +276,7 @@ assert
 txna ApplicationArgs 1
 int 0
 getbyte
-callsub assetdestroy_19
+callsub assetdestroy_18
 int 1
 return
 main_l30:
@@ -294,7 +294,7 @@ getbyte
 store 24
 load 23
 load 24
-callsub assetappcloseout_18
+callsub assetappcloseout_17
 int 1
 return
 main_l31:
@@ -325,7 +325,7 @@ load 19
 load 20
 load 21
 load 22
-callsub donationtransfer_17
+callsub donationtransfer_16
 int 1
 return
 main_l32:
@@ -361,7 +361,7 @@ load 15
 load 16
 load 17
 load 18
-callsub paymerchant_16
+callsub paymerchant_15
 int 1
 return
 main_l33:
@@ -388,7 +388,7 @@ int axfer
 assert
 load 12
 load 13
-callsub donorbuytoken_15
+callsub donorbuytoken_14
 int 1
 return
 main_l34:
@@ -442,7 +442,7 @@ load 8
 load 9
 load 10
 load 11
-callsub assetconfig_14
+callsub assetconfig_13
 int 1
 return
 main_l35:
@@ -457,7 +457,7 @@ assert
 txna ApplicationArgs 1
 int 0
 getbyte
-callsub contractoptinusdc_13
+callsub contractoptinusdc_12
 int 1
 return
 main_l36:
@@ -469,7 +469,7 @@ int 0
 !=
 &&
 assert
-callsub assetcreate_12
+callsub assetcreate_11
 store 0
 byte 0x151f7c75
 load 0
@@ -487,7 +487,7 @@ int 0
 !=
 &&
 assert
-callsub test_11
+callsub test_10
 int 1
 return
 main_l38:
@@ -522,7 +522,7 @@ txn ApplicationID
 int 0
 ==
 assert
-callsub assetappcreate_10
+callsub assetappcreate_9
 int 1
 return
 
@@ -661,49 +661,27 @@ itxn_field XferAsset
 load 70
 itxn_field AssetAmount
 load 71
-itxn_field AssetSender
+itxn_field Sender
 load 72
 itxn_field AssetReceiver
 itxn_submit
 retsub
 
-// smart_asa_transfer_inner_txn_2
-smartasatransferinnertxn2_5:
-store 81
-store 80
-store 79
-store 78
-itxn_begin
-int 0
-itxn_field Fee
-int axfer
-itxn_field TypeEnum
-load 78
-itxn_field XferAsset
-load 79
-itxn_field AssetAmount
-load 80
-itxn_field Sender
-load 81
-itxn_field AssetReceiver
-itxn_submit
-retsub
-
 // smart_asa_destroy_inner_txn
-smartasadestroyinnertxn_6:
-store 93
+smartasadestroyinnertxn_5:
+store 89
 itxn_begin
 int 0
 itxn_field Fee
 int acfg
 itxn_field TypeEnum
-load 93
+load 89
 itxn_field ConfigAsset
 itxn_submit
 retsub
 
 // is_valid_address_bytes_length
-isvalidaddressbyteslength_7:
+isvalidaddressbyteslength_6:
 len
 int 32
 ==
@@ -711,7 +689,7 @@ assert
 retsub
 
 // circulating_supply
-circulatingsupply_8:
+circulatingsupply_7:
 store 64
 global CurrentApplicationAddress
 load 64
@@ -724,20 +702,20 @@ load 65
 retsub
 
 // getter_preconditions
-getterpreconditions_9:
-store 98
+getterpreconditions_8:
+store 94
 byte "smart_asa_id"
 app_global_get
 assert
 byte "smart_asa_id"
 app_global_get
-load 98
+load 94
 ==
 assert
 retsub
 
 // asset_app_create
-assetappcreate_10:
+assetappcreate_9:
 txn GlobalNumUint
 int 5
 ==
@@ -759,12 +737,12 @@ int 1
 return
 
 // test
-test_11:
+test_10:
 int 1
 return
 
 // asset_create
-assetcreate_12:
+assetcreate_11:
 txn Sender
 global CreatorAddress
 ==
@@ -814,7 +792,7 @@ app_global_get
 retsub
 
 // contract_opt_in_usdc
-contractoptinusdc_13:
+contractoptinusdc_12:
 store 52
 itxn_begin
 int 0
@@ -834,7 +812,7 @@ itxn_submit
 retsub
 
 // asset_config
-assetconfig_14:
+assetconfig_13:
 store 63
 store 62
 store 61
@@ -856,13 +834,13 @@ txnas Assets
 ==
 assert
 load 60
-callsub isvalidaddressbyteslength_7
+callsub isvalidaddressbyteslength_6
 load 61
-callsub isvalidaddressbyteslength_7
+callsub isvalidaddressbyteslength_6
 load 62
-callsub isvalidaddressbyteslength_7
+callsub isvalidaddressbyteslength_6
 load 63
-callsub isvalidaddressbyteslength_7
+callsub isvalidaddressbyteslength_6
 txn Sender
 byte "manager_addr"
 app_global_get
@@ -872,44 +850,44 @@ byte "reserve_addr"
 app_global_get
 load 61
 !=
-bnz assetconfig_14_l5
-assetconfig_14_l1:
+bnz assetconfig_13_l5
+assetconfig_13_l1:
 byte "freeze_addr"
 app_global_get
 load 62
 !=
-bnz assetconfig_14_l4
-assetconfig_14_l2:
+bnz assetconfig_13_l4
+assetconfig_13_l2:
 byte "clawback_addr"
 app_global_get
 load 63
 !=
-bz assetconfig_14_l6
+bz assetconfig_13_l6
 byte "clawback_addr"
 app_global_get
 global ZeroAddress
 !=
 assert
-b assetconfig_14_l6
-assetconfig_14_l4:
+b assetconfig_13_l6
+assetconfig_13_l4:
 byte "freeze_addr"
 app_global_get
 global ZeroAddress
 !=
 assert
-b assetconfig_14_l2
-assetconfig_14_l5:
+b assetconfig_13_l2
+assetconfig_13_l5:
 byte "reserve_addr"
 app_global_get
 global ZeroAddress
 !=
 assert
-b assetconfig_14_l1
-assetconfig_14_l6:
+b assetconfig_13_l1
+assetconfig_13_l6:
 load 54
 byte "smart_asa_id"
 app_global_get
-callsub circulatingsupply_8
+callsub circulatingsupply_7
 >=
 assert
 byte "total"
@@ -948,7 +926,7 @@ app_global_put
 retsub
 
 // donor_buy_token
-donorbuytoken_15:
+donorbuytoken_14:
 store 68
 store 67
 load 68
@@ -982,9 +960,11 @@ int 1
 assert
 byte "smart_asa_id"
 app_global_get
-callsub circulatingsupply_8
+callsub circulatingsupply_7
 load 67
 gtxns AssetAmount
+int 100000
+/
 +
 byte "total"
 app_global_get
@@ -994,13 +974,15 @@ byte "smart_asa_id"
 app_global_get
 load 67
 gtxns AssetAmount
+int 100000
+/
 global CurrentApplicationAddress
 txn Sender
 callsub smartasatransferinnertxn_4
 retsub
 
 // pay_merchant
-paymerchant_16:
+paymerchant_15:
 store 77
 store 76
 store 75
@@ -1047,6 +1029,8 @@ assert
 byte "smart_asa_id"
 app_global_get
 load 75
+int 100000
+*
 load 76
 txnas Accounts
 global CurrentApplicationAddress
@@ -1054,64 +1038,66 @@ callsub smartasatransferinnertxn_4
 byte "usdc_id"
 app_global_get
 load 75
+int 100000
+*
 global CurrentApplicationAddress
 load 77
 txnas Accounts
-callsub smartasatransferinnertxn2_5
+callsub smartasatransferinnertxn_4
 retsub
 
 // donation_transfer
-donationtransfer_17:
-store 85
-store 84
-store 83
-store 82
-load 84
+donationtransfer_16:
+store 81
+store 80
+store 79
+store 78
+load 80
 txnas Accounts
 byte "donor_role"
 app_local_get
 int 1
 ==
 assert
-load 82
+load 78
 txnas Assets
 byte "smart_asa_id"
 app_global_get
 ==
 assert
-load 85
+load 81
 txnas Accounts
 byte "redcross_role"
 app_local_get
 int 1
 ==
 assert
-load 84
+load 80
 txnas Accounts
 txn Sender
 ==
 assert
 byte "smart_asa_id"
 app_global_get
-load 83
-load 84
+load 79
+load 80
 txnas Accounts
-load 85
+load 81
 txnas Accounts
 callsub smartasatransferinnertxn_4
 retsub
 
 // asset_app_closeout
-assetappcloseout_18:
-store 87
-store 86
-load 87
+assetappcloseout_17:
+store 83
+store 82
+load 83
 txnas Accounts
-callsub isvalidaddressbyteslength_7
+callsub isvalidaddressbyteslength_6
 txn Sender
 byte "smart_asa_id"
 app_local_get
-load 86
+load 82
 txnas Assets
 ==
 assert
@@ -1132,7 +1118,7 @@ txn GroupIndex
 int 1
 +
 gtxns XferAsset
-load 86
+load 82
 txnas Assets
 ==
 assert
@@ -1157,62 +1143,62 @@ gtxns AssetCloseTo
 global CurrentApplicationAddress
 ==
 assert
-load 86
+load 82
 txnas Assets
 asset_params_get AssetCreator
-store 91
-store 90
-load 91
-bz assetappcloseout_18_l4
+store 87
+store 86
+load 87
+bz assetappcloseout_17_l4
 byte "smart_asa_id"
 app_global_get
-load 86
+load 82
 txnas Assets
 ==
 assert
-load 87
+load 83
 txnas Accounts
 global CurrentApplicationAddress
 !=
-bnz assetappcloseout_18_l3
-assetappcloseout_18_l2:
+bnz assetappcloseout_17_l3
+assetappcloseout_17_l2:
 txn Sender
-load 86
+load 82
 txnas Assets
 asset_holding_get AssetBalance
-store 89
-store 88
-load 86
+store 85
+store 84
+load 82
 txnas Assets
-load 88
+load 84
 txn Sender
-load 87
+load 83
 txnas Accounts
 callsub smartasatransferinnertxn_4
-b assetappcloseout_18_l4
-assetappcloseout_18_l3:
+b assetappcloseout_17_l4
+assetappcloseout_17_l3:
 byte "smart_asa_id"
 app_global_get
-load 87
+load 83
 txnas Accounts
 byte "smart_asa_id"
 app_local_get
 ==
 assert
-b assetappcloseout_18_l2
-assetappcloseout_18_l4:
+b assetappcloseout_17_l2
+assetappcloseout_17_l4:
 int 1
 return
 
 // asset_destroy
-assetdestroy_19:
-store 92
+assetdestroy_18:
+store 88
 byte "smart_asa_id"
 app_global_get
 assert
 byte "smart_asa_id"
 app_global_get
-load 92
+load 88
 txnas Assets
 ==
 assert
@@ -1221,14 +1207,14 @@ byte "manager_addr"
 app_global_get
 ==
 assert
-load 92
+load 88
 txnas Assets
-callsub smartasadestroyinnertxn_6
+callsub smartasadestroyinnertxn_5
 callsub initglobalstate_0
 retsub
 
 // set_redcross_role
-setredcrossrole_20:
+setredcrossrole_19:
 txnas Accounts
 byte "redcross_role"
 int 1
@@ -1236,63 +1222,58 @@ app_local_put
 retsub
 
 // set_donor_role
-setdonorrole_21:
-store 95
-store 94
-txn Sender
-byte "manager_addr"
-app_global_get
-==
-assert
-load 95
+setdonorrole_20:
+store 91
+store 90
+load 91
 int 1
 ==
-bnz setdonorrole_21_l2
-load 94
+bnz setdonorrole_20_l2
+load 90
 txnas Accounts
 byte "donor_role"
 int 0
 app_local_put
-b setdonorrole_21_l3
-setdonorrole_21_l2:
-load 94
+b setdonorrole_20_l3
+setdonorrole_20_l2:
+load 90
 txnas Accounts
 byte "donor_role"
 int 1
 app_local_put
-setdonorrole_21_l3:
+setdonorrole_20_l3:
 retsub
 
 // set_merchant_role
-setmerchantrole_22:
-store 97
-store 96
+setmerchantrole_21:
+store 93
+store 92
 txn Sender
 byte "manager_addr"
 app_global_get
 ==
 assert
-load 97
+load 93
 int 1
 ==
-bnz setmerchantrole_22_l2
-load 96
+bnz setmerchantrole_21_l2
+load 92
 txnas Accounts
 byte "merchant_role"
 int 0
 app_local_put
-b setmerchantrole_22_l3
-setmerchantrole_22_l2:
-load 96
+b setmerchantrole_21_l3
+setmerchantrole_21_l2:
+load 92
 txnas Accounts
 byte "merchant_role"
 int 1
 app_local_put
-setmerchantrole_22_l3:
+setmerchantrole_21_l3:
 retsub
 
 // get_is_worker
-getisworker_23:
+getisworker_22:
 byte "redcross_role"
 app_local_get
 int 1
@@ -1302,7 +1283,7 @@ int 1
 retsub
 
 // get_is_donor
-getisdonor_24:
+getisdonor_23:
 byte "donor_role"
 app_local_get
 int 1
@@ -1312,7 +1293,7 @@ int 1
 retsub
 
 // get_is_merchant
-getismerchant_25:
+getismerchant_24:
 byte "merchant_role"
 app_local_get
 int 1
@@ -1322,27 +1303,27 @@ int 1
 retsub
 
 // get_circulating_supply
-getcirculatingsupply_26:
+getcirculatingsupply_25:
 store 33
 load 33
 txnas Assets
-callsub getterpreconditions_9
+callsub getterpreconditions_8
 load 33
 txnas Assets
-callsub circulatingsupply_8
+callsub circulatingsupply_7
 retsub
 
 // get_optin_min_balance
-getoptinminbalance_27:
+getoptinminbalance_26:
 txnas Assets
-callsub getterpreconditions_9
+callsub getterpreconditions_8
 int 214000
 retsub
 
 // get_asset_config
-getassetconfig_28:
+getassetconfig_27:
 txnas Assets
-callsub getterpreconditions_9
+callsub getterpreconditions_8
 byte "total"
 app_global_get
 store 36
