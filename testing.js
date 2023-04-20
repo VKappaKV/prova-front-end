@@ -48,15 +48,15 @@ let usdc_id = 67395862;
 
 // Da compilare dopo step doDeploy
 let smartContractAddress =
-  "NC6BZAISGFL2OXU6FSN7MQH6KOCAKOWUTVLJ32ANJSOKHZTZ6QNBMFP2MU";
-let appId = 170690461;
+  "2KM6WMO62H3PO46VDRYGCQOSY4RWHKAKELI4SYSHCZZXXKUGT3LSKA7XYI";
+let appId = 203022326;
 
 // Da compilare dopo step doStartingTasks
-let assetId = 170690482;
+let assetId = 203022506;
 
 // Steps:
 let doDeploy = false; //deploy
-let updateContract = true; //update
+let updateContract = false; //update
 
 let doStartingTasks = false; // fund the contract and asset creation
 let doContractUsdcOptIn = false;
@@ -109,7 +109,7 @@ async function main() {
     // Assign roles
 
     await assign_donor_role();
-    console.log("Donor role assigned");
+    console.log("Donor role assigned"); 
     await assign_merch_role();
     console.log("Merchant role assigned");
     await assign_redcross_role();
@@ -390,12 +390,7 @@ async function assign_donor_role() {
 
   atc.addMethodCall({
     method: getMethodByName("set_donor_role", contract),
-    //methodArgs: [account.addr, true],
-    methodArgs: [
-      //  "U45OH5J2KLOBOQ5BF47ZOUFWJPR6YVKVSPRL4QIDL2TBGKE47QW4OXPADY",
-      true,
-    ],
-
+    methodArgs: [account.addr, true],
     ...commonParams,
   });
 
