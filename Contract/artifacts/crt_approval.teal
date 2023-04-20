@@ -620,7 +620,7 @@ int acfg
 itxn_field TypeEnum
 int 18446744073709551615
 itxn_field ConfigAssetTotal
-int 0
+int 6
 itxn_field ConfigAssetDecimals
 int 1
 itxn_field ConfigAssetDefaultFrozen
@@ -780,7 +780,7 @@ byte "total"
 int 18446744073709551615
 app_global_put
 byte "decimals"
-int 0
+int 6
 app_global_put
 byte "default_frozen"
 int 1
@@ -985,8 +985,6 @@ app_global_get
 callsub circulatingsupply_8
 load 67
 gtxns AssetAmount
-int 100000
-/
 +
 byte "total"
 app_global_get
@@ -996,8 +994,6 @@ byte "smart_asa_id"
 app_global_get
 load 67
 gtxns AssetAmount
-int 100000
-/
 global CurrentApplicationAddress
 txn Sender
 callsub smartasatransferinnertxn_4
@@ -1051,8 +1047,6 @@ assert
 byte "smart_asa_id"
 app_global_get
 load 75
-int 100000
-*
 load 76
 txnas Accounts
 global CurrentApplicationAddress
@@ -1060,8 +1054,6 @@ callsub smartasatransferinnertxn_4
 byte "usdc_id"
 app_global_get
 load 75
-int 100000
-*
 global CurrentApplicationAddress
 load 77
 txnas Accounts

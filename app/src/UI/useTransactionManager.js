@@ -21,9 +21,9 @@ const contract = new algosdk.ABIContract(crt);
 
 // Da compilare dopo step doDeploy
 let smartContractAddress =
-  "NC6BZAISGFL2OXU6FSN7MQH6KOCAKOWUTVLJ32ANJSOKHZTZ6QNBMFP2MU";
-let appId = 170690461;
-let assetId = 170690482;
+  "2KM6WMO62H3PO46VDRYGCQOSY4RWHKAKELI4SYSHCZZXXKUGT3LSKA7XYI";
+let appId = 203022326;
+let assetId = 203022506;
 let usdc_id = 67395862;
 
 export default function useTransactionManager() {

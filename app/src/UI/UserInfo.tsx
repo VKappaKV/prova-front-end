@@ -4,7 +4,7 @@ import { useWallet } from "@txnlab/use-wallet";
 import { useMyFunction } from "./useTransactionManager";
 import Button from "@mui/material/Button";
 
-let assetId = 170690482;
+let assetId = 203022506;
 let usdc_id = 67395862;
 
 export default function UserInfo() {
@@ -60,7 +60,7 @@ export default function UserInfo() {
   return (
     <>
       <p>My address: {activeAccount?.address}</p>
-      <p>Smart Asa Balance: {activeAccount ? asa_balance : null}</p>
+      <p>Smart Asa Balance: {activeAccount ? asa_balance / 1000000 : null}</p>
       <p>USDC Balance: {activeAccount ? usdc_balance / 1000000 : null}</p>
 
       <Button variant="contained" onClick={donor_buy_token_call}>

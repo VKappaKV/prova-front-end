@@ -143,7 +143,7 @@ def strip_len_prefix(abi_encoded: Expr) -> Expr:
 # / --- --- UNDERLYING ASA CONFIG
 SMART_ASA_APP_BINDING = "smart-asa-app-id:"
 UNDERLYING_ASA_TOTAL = Int(2**64 - 1)
-UNDERLYING_ASA_DECIMALS = Int(0)
+UNDERLYING_ASA_DECIMALS = Int(6)
 UNDERLYING_ASA_DEFAULT_FROZEN = Int(1)
 UNDERLYING_ASA_UNIT_NAME = Bytes("CRI")
 UNDERLYING_ASA_NAME = Bytes("RED_CROSS")
@@ -502,7 +502,7 @@ def donor_buy_token(
     # TODO: asset amount è in microUSDC. Quindi al momento 1M CRI = 1USDC
     # Fixabile easy anche da front End. Basta stare attenti e mettere magar
     # un assert per stare attenti
-    amount = Div(payment.get().asset_amount(),Int(1_000_000)) 
+    amount = payment.get().asset_amount()
     enough_supply = circulating_supply(smart_asa_id) + amount <= App.globalGet(GlobalState.total)
 
     return Seq(
@@ -541,7 +541,7 @@ def pay_merchant(
 
     sender = asset_sender.address()
     receiver = asset_receiver.address()
-    amount = Mul(asset_amount.get(),Int(1_000_000)) 
+    amount = asset_amount.get()
 
     asset_sent_is_smart_asa = smart_asa.asset_id() == smart_asa_id
     usdc_to_merchant = usdc_asset.asset_id() == usdc_id
