@@ -5,14 +5,16 @@ import UserInfo from "@/src/UI/UserInfo";
 import { useRouter } from "next/router";
 import { useWallet } from "@txnlab/use-wallet";
 import Tag from "@/src/UI/Tag";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useMyFunction } from "@/src/UI/useTransactionManager";
 import SliderWithButton from "@/src/UI/Slider";
+import { TxnContext } from "@/src/components/Context/TxnContext";
 
 let assetId = 170690482;
 let usdc_id = 67395862;
 
 export default function Home() {
+  const txn = useContext(TxnContext);
   const { providers, activeAccount } = useWallet();
   const {
     donor_buy_token,
@@ -59,7 +61,7 @@ export default function Home() {
   useEffect(() => {
     !!activeAccount && fetchData();
     !!activeAccount && checkAllDonorParams();
-  }, [activeAccount, asa_balance, usdc_balance]);
+  }, [activeAccount, asa_balance, usdc_balance, txn]);
 
   return (
     <>

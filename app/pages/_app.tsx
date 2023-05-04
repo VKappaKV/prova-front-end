@@ -10,6 +10,7 @@ import {
   WalletProvider,
   PROVIDER_ID,
 } from "@txnlab/use-wallet";
+import { TxnProvider } from "@/src/components/Context/TxnContext";
 
 const walletProviders = initializeProviders([PROVIDER_ID.PERA], {
   network: "testnet",
@@ -25,7 +26,9 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <SSRProvider>
       <WalletProvider value={walletProviders}>
-        <Component {...pageProps} />
+        <TxnProvider>
+          <Component {...pageProps} />
+        </TxnProvider>
       </WalletProvider>
     </SSRProvider>
   );

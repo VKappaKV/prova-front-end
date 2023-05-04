@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useWalletUI } from "@algoscan/use-wallet-ui";
 import { useWallet } from "@txnlab/use-wallet";
 import { useMyFunction } from "./useTransactionManager";
 import Button from "@mui/material/Button";
+import { TxnContext } from "../components/Context/TxnContext";
 
 let assetId = 203022506;
 let usdc_id = 67395862;
 
 export default function UserInfo() {
+  const txn = useContext(TxnContext);
   const {
     donor_buy_token,
     pay_merchant,
@@ -28,7 +30,7 @@ export default function UserInfo() {
 
   useEffect(() => {
     !!activeAccount && fetchData();
-  }, [activeAccount, asa_balance, usdc_balance]);
+  }, [activeAccount, asa_balance, usdc_balance, txn]);
 
   const donor_buy_token_call = () => {
     donor_buy_token(1)

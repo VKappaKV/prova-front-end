@@ -2,6 +2,8 @@ import algosdk from "algosdk";
 import { useWallet } from "@txnlab/use-wallet";
 import crt from "../../../contract/artifacts/crt.json";
 import { useWalletUI } from "@algoscan/use-wallet-ui";
+import { useContext } from "react";
+import { TxnContext } from "../components/Context/TxnContext";
 const fs = require("fs");
 
 //For Purestake
@@ -31,6 +33,7 @@ export default function useTransactionManager() {
 }
 
 export function useMyFunction() {
+  const { setTxn } = useContext(TxnContext);
   const { activeAddress, signer, signTransactions, sendTransactions } =
     useWallet();
 
@@ -109,6 +112,9 @@ export function useMyFunction() {
       }
     });
     const result = await atc.execute(client, 2);
+    if (result.confirmedRound) {
+      setTxn(result);
+    }
     for (const idx in result.methodResults) {
       console.log(result.methodResults[idx]);
     }
@@ -149,6 +155,9 @@ export function useMyFunction() {
     });
 
     const result = await atc.execute(client, 2);
+    if (result.confirmedRound) {
+      setTxn(result);
+    }
     for (const idx in result.methodResults) {
       console.log(result.methodResults[idx]);
     }
@@ -176,6 +185,9 @@ export function useMyFunction() {
     });
 
     const result = await atc.execute(client, 2);
+    if (result.confirmedRound) {
+      setTxn(result);
+    }
     for (const idx in result.methodResults) {
       console.log(result.methodResults[idx]);
     }
