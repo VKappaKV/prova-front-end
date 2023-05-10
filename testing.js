@@ -63,7 +63,7 @@ let doContractUsdcOptIn = false;
 let doOptInAndAssignRole = false; // creator opt-in into app and ASA
 let buyToken = false; //creator buy smart ASA using ALGO
 let payMerchant_ = false; // Creator pay a merchant using smart ASA
-let donor_transfer = false; // Transfer from creator to CRI
+let donor_transfer = true; // Transfer from creator to CRI
 
 main();
 
@@ -556,7 +556,7 @@ async function donor_transfer_asa() {
 
   atc.addMethodCall({
     method: getMethodByName("donation_transfer", contract),
-    methodArgs: [assetId, 2000, account.addr, CriAccount.addr],
+    methodArgs: [assetId, 1000, account.addr, CriAccount.addr],
     ...commonParams,
   });
 

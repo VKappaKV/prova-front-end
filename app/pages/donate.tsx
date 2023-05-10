@@ -19,19 +19,13 @@ export default function Home() {
   const {
     donor_buy_token,
     get_asa_balance,
-    opt_in_asa,
-    opt_in_app,
-    set_account_as_donor,
     account_is_donor,
     donation_to_cri,
   } = useMyFunction();
   const pera = providers?.at(0);
   let router = useRouter();
   const [asa_balance, set_asa_balance] = useState(0);
-  const [usdc_balance, set_usdc_balance] = useState(0);
-  const [accountHasUSDC, setAccountHasUSDC] = useState(false);
   const [accountIsDonor, setAccountIsDonor] = useState(false);
-
   const criAddress = useRef<HTMLInputElement>(null);
 
   const cri_addresses = [
@@ -46,27 +40,16 @@ export default function Home() {
     },
   ];
 
-  function openLinkInNewTab(url: string) {
-    if (typeof window !== "undefined") {
-      window.open(url, "_blank");
-    }
-  }
-
   async function fetchData() {
     let response = await get_asa_balance(CRI_ASA_ID);
     set_asa_balance(response);
-    let response2 = await get_asa_balance(USDC_ASA_ID);
-    set_usdc_balance(response2);
-    if (usdc_balance > 0.1) {
-      setAccountHasUSDC(true && !!activeAccount);
-    }
   }
 
   const checkAllDonorParams = async () => {
     const params = await account_is_donor().catch((e) => {
       console.log("errore: ", e);
       return [false, false, false];
-    }); // Params[0]: App opt-in ; Params[1]: ASA opt-in; Params[2]: Local State "donor_role"
+    });
     const checkParams = params[0] && params[1] && params[2];
     if (checkParams) {
       setAccountIsDonor(true);
@@ -76,16 +59,16 @@ export default function Home() {
   useEffect(() => {
     !!activeAccount && fetchData();
     !!activeAccount && checkAllDonorParams();
-  }, [activeAccount, asa_balance, usdc_balance, txn]);
+  }, [activeAccount]);
 
   //Donation button
-  interface DonateTokenProps {
+  interface BuyTokenProps {
     minValue: number;
     maxValue: number;
     handlerFunction: (value: number, address: string) => Promise<void>;
   }
 
-  const DonateToken: React.FC<DonateTokenProps> = ({
+  const BuyToken: React.FC<BuyTokenProps> = ({
     minValue,
     maxValue,
     handlerFunction,
@@ -126,6 +109,7 @@ export default function Home() {
       </Head>
       <main>
         <TopNavbar />
+        <UserInfo />
         <div
           style={{
             display: "flex",
@@ -136,53 +120,23 @@ export default function Home() {
             gap: "3vh",
           }}
         >
-          <h1>WELCOME ON HELPY </h1>
-          {activeAccount ? (
+          <h1>Donation page</h1>
+          {activeAccount && accountIsDonor ? (
             <div>
-              <h6>welcome: {activeAccount?.name}</h6>
-              <UserInfo />
-            </div>
-          ) : (
-            <div>
-              <h4>Connect wallet to begin</h4>
-            </div>
-          )}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: "5vh",
-              flexWrap: "wrap",
-            }}
-          >
-            <Tag
-              condition={!!activeAccount}
-              valueToShow="1. Connect Wallet"
-              onClick={pera?.connect}
-              disabled={!!activeAccount}
-            />
-            <Tag
-              condition={accountHasUSDC && !!activeAccount}
-              valueToShow="2. Load up USDC"
-              onClick={() => {
-                openLinkInNewTab("https://testnet.folks.finance/faucet");
-              }}
-              disabled={false}
-            />
-            <Tag
-              condition={accountIsDonor && !!activeAccount}
-              valueToShow="3. Become donor"
-              disabled={accountIsDonor}
-              onClick={set_account_as_donor}
-            />
-          </div>
-          {!!activeAccount && accountIsDonor ? (
-            <div>
-              <BuyToken
-                minValue={0}
-                maxValue={usdc_balance}
-                handlerFunction={donor_buy_token}
-              />
+              <h6>Account name: {activeAccount?.name}</h6>
+
+              <br></br>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: "5vh",
+                  flexWrap: "wrap",
+                  marginTop: 50,
+                }}
+              ></div>
+
+              <br></br>
 
               <Box
                 component="form"
@@ -209,43 +163,20 @@ export default function Home() {
                   </TextField>
                 </div>
 
-                <DonateToken
+                <BuyToken
                   minValue={0}
                   maxValue={asa_balance}
                   handlerFunction={donation_to_cri}
                 />
               </Box>
             </div>
-          ) : null}
+          ) : (
+            <div>
+              <h4>Connect wallet to begin</h4>
+            </div>
+          )}
         </div>
       </main>
     </>
   );
 }
-
-interface BuyTokenProps {
-  minValue: number;
-  maxValue: number;
-  handlerFunction: (value: number) => void;
-}
-
-const BuyToken: React.FC<BuyTokenProps> = ({
-  minValue,
-  maxValue,
-  handlerFunction,
-}) => {
-  const handleSliderButtonClick = (value: number) => {
-    handlerFunction(value * 1_000_000);
-  };
-
-  return (
-    <div>
-      <SliderWithButton
-        handlerFunction={handleSliderButtonClick}
-        minValue={minValue}
-        maxValue={maxValue / 1_000_000}
-        buttonText="BUY CRI TOKEN"
-      />
-    </div>
-  );
-};

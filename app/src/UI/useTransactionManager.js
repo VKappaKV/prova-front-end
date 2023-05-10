@@ -22,6 +22,7 @@ const algodPort = "";
 const client = new algosdk.Algodv2(algodToken, algodServer, algodPort);
 const contract = new algosdk.ABIContract(crt);
 
+
 export default function useTransactionManager() {
   return 0;
 }
@@ -182,10 +183,39 @@ export function useMyFunction() {
     if (result.confirmedRound) {
       setTxn(result);
     }
-    for (const idx in result.methodResults) {
-      console.log(result.methodResults[idx]);
-    }
   };
+
+  const donation_to_cri = async (amount, cri_address) => {
+
+    console.log("donate to cry called");
+
+    const atc = new algosdk.AtomicTransactionComposer();
+    const sp = await client.getTransactionParams().do();
+    sp.fee = 3000;
+    sp.flatFee = true;
+
+    const commonParams = {
+      APP_ID: APP_ID,
+      sender: activeAddress,
+      suggestedParams: sp,
+      signer: signer,
+    };
+
+    console.log("stampa:" , cri_address , "_" , amount);
+  
+    atc.addMethodCall({
+      method: getMethodByName("donation_transfer", contract),
+      methodArgs: [CRI_ASA_ID, amount, activeAddress, cri_address],
+      ...commonParams,
+    });
+  
+    const result = await atc.execute(client, 2);
+    if (result.confirmedRound) {
+      setTxn(result);
+    }
+   
+  }
+
 
   const get_asa_balance = async (asset_id) => {
     if (activeAddress) {
@@ -256,6 +286,7 @@ export function useMyFunction() {
     opt_in_app,
     account_is_donor,
     set_account_as_donor,
+    donation_to_cri
   };
 }
 
