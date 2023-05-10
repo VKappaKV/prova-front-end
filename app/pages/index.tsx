@@ -1,6 +1,5 @@
 import TopNavbar from "@/src/UI/Navbar";
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
 import UserInfo from "@/src/UI/UserInfo";
 import { useRouter } from "next/router";
 import { useWallet } from "@txnlab/use-wallet";
@@ -9,9 +8,7 @@ import { useContext, useEffect, useState } from "react";
 import { useMyFunction } from "@/src/UI/useTransactionManager";
 import SliderWithButton from "@/src/UI/Slider";
 import { TxnContext } from "@/src/components/Context/TxnContext";
-
-let assetId = 170690482;
-let usdc_id = 67395862;
+import { CRI_ASA_ID, USDC_ASA_ID } from "@/src/constants/utility";
 
 export default function Home() {
   const txn = useContext(TxnContext);
@@ -38,9 +35,9 @@ export default function Home() {
   }
 
   async function fetchData() {
-    let response = await get_asa_balance(assetId);
+    let response = await get_asa_balance(CRI_ASA_ID);
     set_asa_balance(response);
-    let response2 = await get_asa_balance(usdc_id);
+    let response2 = await get_asa_balance(USDC_ASA_ID);
     set_usdc_balance(response2);
     if (usdc_balance > 0.1) {
       setAccountHasUSDC(true && !!activeAccount);

@@ -4,6 +4,7 @@ import crt from "../../../contract/artifacts/crt.json";
 import { useWalletUI } from "@algoscan/use-wallet-ui";
 import { useContext } from "react";
 import { TxnContext } from "../components/Context/TxnContext";
+import { CRI_ASA_ID, USDC_ASA_ID, APP_ID, CONTRACT_ADD } from "@/src/constants/utility";
 const fs = require("fs");
 
 //For Purestake
@@ -21,13 +22,6 @@ const algodPort = "";
 const client = new algosdk.Algodv2(algodToken, algodServer, algodPort);
 const contract = new algosdk.ABIContract(crt);
 
-// Da compilare dopo step doDeploy
-let smartContractAddress =
-  "2KM6WMO62H3PO46VDRYGCQOSY4RWHKAKELI4SYSHCZZXXKUGT3LSKA7XYI";
-let appId = 203022326;
-let assetId = 203022506;
-let usdc_id = 67395862;
-
 export default function useTransactionManager() {
   return 0;
 }
@@ -41,16 +35,16 @@ export function useMyFunction() {
     const accountInfo = await client.accountInformation(activeAddress).do();
     console.log(`Raw local state - ${JSON.stringify(accountInfo)}`);
     const check_ASA_optIn = accountInfo.assets.some(
-      (asset) => asset["asset-id"] === assetId
+      (asset) => asset["asset-id"] === CRI_ASA_ID
     );
     const check_App_optIn = accountInfo["apps-local-state"].some(
-      (app) => app.id === appId
+      (app) => app.id === APP_ID
     );
 
     if (!check_ASA_optIn && !check_App_optIn) return [false, false, false];
 
     const accountInfoOfAppObj = await client
-      .accountApplicationInformation(activeAddress, appId)
+      .accountApplicationInformation(activeAddress, APP_ID)
       .do();
     const localState = accountInfoOfAppObj["app-local-state"]["key-value"][0];
     console.log(`Raw local state - ${JSON.stringify(accountInfoOfAppObj)}`);
@@ -70,7 +64,7 @@ export function useMyFunction() {
     sp.flatFee = true;
     sp.fee = 1000;
     const commonParams = {
-      appID: appId,
+      APP_ID: APP_ID,
       sender: activeAddress,
       suggestedParams: sp,
       signer: signer,
@@ -95,7 +89,7 @@ export function useMyFunction() {
               undefined,
               0,
               undefined,
-              assetId,
+              CRI_ASA_ID,
               sp
             );
             atc.addTransaction({ txn: txn_ASA, signer: signer });
@@ -104,7 +98,7 @@ export function useMyFunction() {
             let txn_App = algosdk.makeApplicationOptInTxn(
               activeAddress,
               sp,
-              appId
+              APP_ID
             );
             atc.addTransaction({ txn: txn_App, signer: signer });
             break;
@@ -127,7 +121,7 @@ export function useMyFunction() {
     sp.flatFee = true;
 
     const commonParams = {
-      appID: appId,
+      APP_ID: APP_ID,
       sender: activeAddress,
       suggestedParams: sp,
       signer: signer,
@@ -136,12 +130,12 @@ export function useMyFunction() {
     const txn = {
       txn: algosdk.makeAssetTransferTxnWithSuggestedParams(
         activeAddress,
-        smartContractAddress,
+        CONTRACT_ADD,
         undefined,
         undefined,
         amount,
         undefined,
-        usdc_id,
+        USDC_ASA_ID,
         sp
       ),
       signer: signer,
@@ -150,7 +144,7 @@ export function useMyFunction() {
 
     atc.addMethodCall({
       method: getMethodByName("donor_buy_token", contract),
-      methodArgs: [txn, assetId],
+      methodArgs: [txn, CRI_ASA_ID],
       ...commonParams,
     });
 
@@ -172,7 +166,7 @@ export function useMyFunction() {
     sp.flatFee = true;
 
     const commonParams = {
-      appID: appId,
+      APP_ID: APP_ID,
       sender: activeAddress,
       suggestedParams: sp,
       signer: signer,
@@ -180,7 +174,7 @@ export function useMyFunction() {
 
     atc.addMethodCall({
       method: getMethodByName("pay_merchant", contract),
-      methodArgs: [assetId, usdc_id, amount, activeAddress, merchAddr],
+      methodArgs: [CRI_ASA_ID, USDC_ASA_ID, amount, activeAddress, merchAddr],
       ...commonParams,
     });
 
@@ -239,7 +233,7 @@ export function useMyFunction() {
     params.fee = 1000;
     params.flatFee = true;
 
-    let opttxn = algosdk.makeApplicationOptInTxn(activeAddress, params, appId);
+    let opttxn = algosdk.makeApplicationOptInTxn(activeAddress, params, APP_ID);
 
     const encodedTransaction = algosdk.encodeUnsignedTransaction(opttxn);
     const signedTransactions = await signTransactions([encodedTransaction]);

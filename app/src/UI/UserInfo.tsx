@@ -4,9 +4,7 @@ import { useWallet } from "@txnlab/use-wallet";
 import { useMyFunction } from "./useTransactionManager";
 import Button from "@mui/material/Button";
 import { TxnContext } from "../components/Context/TxnContext";
-
-let assetId = 203022506;
-let usdc_id = 67395862;
+import { CRI_ASA_ID, USDC_ASA_ID } from "@/src/constants/utility";
 
 export default function UserInfo() {
   const txn = useContext(TxnContext);
@@ -22,9 +20,9 @@ export default function UserInfo() {
   const [usdc_balance, set_usdc_balance] = useState(0);
 
   async function fetchData() {
-    let response = await get_asa_balance(assetId);
+    let response = await get_asa_balance(CRI_ASA_ID);
     set_asa_balance(response);
-    let response2 = await get_asa_balance(usdc_id);
+    let response2 = await get_asa_balance(USDC_ASA_ID);
     set_usdc_balance(response2);
   }
 
