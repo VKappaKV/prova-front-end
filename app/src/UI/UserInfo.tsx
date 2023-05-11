@@ -62,22 +62,6 @@ export default function UserInfo() {
       <p>My address: {activeAccount?.address}</p>
       <p>Smart Asa Balance: {activeAccount ? asa_balance / 1000000 : null}</p>
       <p>USDC Balance: {activeAccount ? usdc_balance / 1000000 : null}</p>
-
-      <Button variant="contained" onClick={donor_buy_token_call}>
-        {" Donor buy token"}
-      </Button>
-      {/* <Button variant="contained" onClick={pay_merchant_call}>
-        {" Pay Merchant"}
-      </Button>
-      <Button variant="contained" onClick={opt_in_call.bind(null, usdc_id)}>
-        {" OptIn USDC"}
-      </Button>
-      <Button variant="contained" onClick={opt_in_call.bind(null, assetId)}>
-        {" OptIn Smart ASA"}
-      </Button>
-      <Button variant="contained" onClick={opt_in_app_call}>
-        {" OptIn App"}
-      </Button> */}
     </>
   );
 }

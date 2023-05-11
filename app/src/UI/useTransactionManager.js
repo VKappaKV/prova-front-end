@@ -1,10 +1,14 @@
 import algosdk from "algosdk";
 import { useWallet } from "@txnlab/use-wallet";
 import crt from "../../../contract/artifacts/crt.json";
-import { useWalletUI } from "@algoscan/use-wallet-ui";
 import { useContext } from "react";
 import { TxnContext } from "../components/Context/TxnContext";
-import { CRI_ASA_ID, USDC_ASA_ID, APP_ID, CONTRACT_ADD } from "@/src/constants/utility";
+import {
+  CRI_ASA_ID,
+  USDC_ASA_ID,
+  APP_ID,
+  CONTRACT_ADD,
+} from "@/src/constants/utility";
 const fs = require("fs");
 
 //For Purestake
@@ -21,7 +25,6 @@ const algodPort = "";
 
 const client = new algosdk.Algodv2(algodToken, algodServer, algodPort);
 const contract = new algosdk.ABIContract(crt);
-
 
 export default function useTransactionManager() {
   return 0;
@@ -65,7 +68,7 @@ export function useMyFunction() {
     sp.flatFee = true;
     sp.fee = 1000;
     const commonParams = {
-      APP_ID: APP_ID,
+      appID: APP_ID,
       sender: activeAddress,
       suggestedParams: sp,
       signer: signer,
@@ -122,7 +125,7 @@ export function useMyFunction() {
     sp.flatFee = true;
 
     const commonParams = {
-      APP_ID: APP_ID,
+      appID: APP_ID,
       sender: activeAddress,
       suggestedParams: sp,
       signer: signer,
@@ -167,7 +170,7 @@ export function useMyFunction() {
     sp.flatFee = true;
 
     const commonParams = {
-      APP_ID: APP_ID,
+      appID: APP_ID,
       sender: activeAddress,
       suggestedParams: sp,
       signer: signer,
@@ -186,7 +189,6 @@ export function useMyFunction() {
   };
 
   const donation_to_cri = async (amount, cri_address) => {
-
     console.log("donate to cry called");
 
     const atc = new algosdk.AtomicTransactionComposer();
@@ -195,27 +197,25 @@ export function useMyFunction() {
     sp.flatFee = true;
 
     const commonParams = {
-      APP_ID: APP_ID,
+      appID: APP_ID,
       sender: activeAddress,
       suggestedParams: sp,
       signer: signer,
     };
 
-    console.log("stampa:" , cri_address , "_" , amount);
-  
+    console.log("stampa:", cri_address, "_", amount);
+
     atc.addMethodCall({
       method: getMethodByName("donation_transfer", contract),
       methodArgs: [CRI_ASA_ID, amount, activeAddress, cri_address],
       ...commonParams,
     });
-  
+
     const result = await atc.execute(client, 2);
     if (result.confirmedRound) {
       setTxn(result);
     }
-   
-  }
-
+  };
 
   const get_asa_balance = async (asset_id) => {
     if (activeAddress) {
@@ -286,7 +286,7 @@ export function useMyFunction() {
     opt_in_app,
     account_is_donor,
     set_account_as_donor,
-    donation_to_cri
+    donation_to_cri,
   };
 }
 
