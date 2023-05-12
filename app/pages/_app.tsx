@@ -12,6 +12,8 @@ import {
 } from "@txnlab/use-wallet";
 import { TxnProvider } from "@/src/components/Context/TxnContext";
 
+import { ProductProvider } from "@/src/components/Context/product.context";
+
 const walletProviders = initializeProviders([PROVIDER_ID.PERA], {
   network: "testnet",
   nodeServer: "https://testnet-api.algonode.cloud",
@@ -27,7 +29,9 @@ export default function App({ Component, pageProps }: AppProps) {
     <SSRProvider>
       <WalletProvider value={walletProviders}>
         <TxnProvider>
-          <Component {...pageProps} />
+          <ProductProvider>
+            <Component {...pageProps} />
+          </ProductProvider>
         </TxnProvider>
       </WalletProvider>
     </SSRProvider>

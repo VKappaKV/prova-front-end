@@ -12,8 +12,9 @@ import { CRI_ASA_ID, USDC_ASA_ID } from "@/src/constants/utility";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
+import type { NextPage } from "next";
 
-export default function Home() {
+const Home: NextPage = () => {
   const txn = useContext(TxnContext);
   const { providers, activeAccount } = useWallet();
   const {
@@ -221,7 +222,7 @@ export default function Home() {
       </main>
     </>
   );
-}
+};
 
 interface BuyTokenProps {
   minValue: number;
@@ -249,3 +250,5 @@ const BuyToken: React.FC<BuyTokenProps> = ({
     </div>
   );
 };
+
+export default Home;
