@@ -12,8 +12,11 @@ import { CRI_ASA_ID, USDC_ASA_ID } from "@/src/constants/utility";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
+import Favorites from "@/src/components/Shop/favorites";
+import ProductList from "@/src/components/Shop/product-list";
 
 export default function Home() {
+  const [favorites, setFavorites] = useState<number[]>([]);
   const txn = useContext(TxnContext);
   const { providers, activeAccount } = useWallet();
   const { get_asa_balance, account_is_donor, pay_merchant } = useMyFunction();
@@ -170,6 +173,12 @@ export default function Home() {
               <h4>Connect wallet to begin</h4>
             </div>
           )}
+        </div>
+        <div className="container">
+          <div>
+            <Favorites />
+            <ProductList />
+          </div>
         </div>
       </main>
     </>
