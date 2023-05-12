@@ -67,6 +67,23 @@ let donor_transfer = true; // Transfer from creator to CRI
 
 main();
 
+async function test_to_retrive_specific_role_adresses(){
+
+  const token = {
+    'X-API-key': 'dUAm46iRb73HzsHBrEYGr1nVw81Yc0Kp5eiNmZDF',
+  }
+
+  const indexerClient = new algosdk.Indexer(token, "https://testnet-algorand.api.purestake.io/idx2", "");
+
+  //Objective: retrive all account with a given role
+  //Idea: create an ASA, when you assign a role give to that person the ASA. 
+  // THen you check the role with the function below of the indexer
+
+  // Returns the list of accounts who hold the given asset and their balance.
+  const assetBalances = await indexerClient.lookupAssetBalances(assetId).do();  
+  
+}
+
 async function main() {
   console.log("start");
 
