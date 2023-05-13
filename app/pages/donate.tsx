@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useWallet } from "@txnlab/use-wallet";
 import Tag from "@/src/UI/Tag";
 import { useContext, useEffect, useState, useRef } from "react";
-import { useMyFunction } from "@/src/UI/useTransactionManager";
+import { useMyFunction } from "@/src/contractManager/useTransactionManager";
 import SliderWithButton from "@/src/UI/Slider";
 import { TxnContext } from "@/src/components/Context/TxnContext";
 import { CRI_ASA_ID, USDC_ASA_ID } from "@/src/constants/utility";
@@ -13,7 +13,9 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 
-export default function Home() {
+import type { NextPage } from "next";
+
+const Donate: NextPage = () => {
   const txn = useContext(TxnContext);
   const { providers, activeAccount } = useWallet();
   const {
@@ -59,7 +61,7 @@ export default function Home() {
   useEffect(() => {
     !!activeAccount && fetchData();
     !!activeAccount && checkAllDonorParams();
-  }, [activeAccount]);
+  }, [activeAccount, txn]);
 
   //Donation button
   interface BuyTokenProps {
@@ -123,9 +125,6 @@ export default function Home() {
           <h1>Donation page</h1>
           {activeAccount && accountIsDonor ? (
             <div>
-              <h6>Account name: {activeAccount?.name}</h6>
-
-              <br></br>
               <div
                 style={{
                   display: "flex",
@@ -179,4 +178,6 @@ export default function Home() {
       </main>
     </>
   );
-}
+};
+
+export default Donate;

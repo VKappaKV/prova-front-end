@@ -1,6 +1,9 @@
 import React from "react";
 import Product from "@/src/types/product";
-import { useProduct } from "../Context/product.context";
+import { useProduct } from "../Context/ProductContext";
+import AddShoppingCart from "@mui/icons-material/AddShoppingCart";
+import RemoveShoppingCart from "@mui/icons-material/RemoveShoppingCart";
+import { Button } from "@mui/material";
 
 interface Props {
   product: Product;
@@ -23,14 +26,22 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
         </div>
       </div>
       <div className="add-to-cart">
-        <button
-          type="button"
-          className="button"
-          onClick={() => handleFavorite(product.id)}
-        >
-          Add to cart
-          <span>{isFavorite ? "❤️" : "❤︎"}</span>
-        </button>
+        {isFavorite ? (
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={() => handleFavorite(product.id)}
+          >
+            <RemoveShoppingCart /> Remove from cart{" "}
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            onClick={() => handleFavorite(product.id)}
+          >
+            <AddShoppingCart /> Add to cart{" "}
+          </Button>
+        )}
       </div>
     </div>
   );

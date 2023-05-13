@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useWallet } from "@txnlab/use-wallet";
 import Tag from "@/src/UI/Tag";
 import { useContext, useEffect, useState, useRef } from "react";
-import { useMyFunction } from "@/src/UI/useTransactionManager";
+import { useMyFunction } from "@/src/contractManager/useTransactionManager";
 import SliderWithButton from "@/src/UI/Slider";
 import { TxnContext } from "@/src/components/Context/TxnContext";
 import { CRI_ASA_ID, USDC_ASA_ID } from "@/src/constants/utility";
@@ -13,6 +13,9 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import type { NextPage } from "next";
+import { Button } from "@mui/material";
+import LocalHospital from "@mui/icons-material/LocalHospital";
+import ShoppingCart from "@mui/icons-material/ShoppingCart";
 
 const Home: NextPage = () => {
   const txn = useContext(TxnContext);
@@ -140,7 +143,6 @@ const Home: NextPage = () => {
           <h1>WELCOME ON HELPY </h1>
           {activeAccount ? (
             <div>
-              <h6>welcome: {activeAccount?.name}</h6>
               <UserInfo />
             </div>
           ) : (
@@ -178,44 +180,36 @@ const Home: NextPage = () => {
             />
           </div>
           {!!activeAccount && accountIsDonor ? (
-            <div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 50 }}>
               <BuyToken
                 minValue={0}
                 maxValue={usdc_balance}
                 handlerFunction={donor_buy_token}
               />
 
-              <Box
-                component="form"
-                sx={{
-                  "& .MuiTextField-root": { m: 1, width: "80vw" },
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 20,
                 }}
-                noValidate
-                autoComplete="off"
               >
-                <div>
-                  <TextField
-                    id="outlined-select-address"
-                    select
-                    label="Select"
-                    defaultValue=""
-                    helperText="Please select a CRI address"
-                    inputRef={criAddress}
-                  >
-                    {cri_addresses.map((option) => (
-                      <MenuItem key={option.address} value={option.address}>
-                        {option.address}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </div>
-
-                <DonateToken
-                  minValue={0}
-                  maxValue={asa_balance}
-                  handlerFunction={donation_to_cri}
-                />
-              </Box>
+                <Button
+                  variant="outlined"
+                  onClick={() => router.push("/donate")}
+                  endIcon={<LocalHospital />}
+                >
+                  Donate To Red Cross
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={() => router.push("/buyMerchant")}
+                  endIcon={<ShoppingCart />}
+                >
+                  Donate Products
+                </Button>
+              </div>
             </div>
           ) : null}
         </div>

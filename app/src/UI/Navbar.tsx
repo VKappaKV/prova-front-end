@@ -4,31 +4,23 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Connect from "../components/Wallet/Connect";
+import { useRouter } from "next/router";
+import Home from "@mui/icons-material/Home";
 
 function TopNavbar() {
+  const router = useRouter();
   return (
     <Navbar bg="light" expand="lg">
       <Container>
-        <Navbar.Brand href="#home">Helpy</Navbar.Brand>
-        {/* 
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Nav className="me-auto">
-              <Nav.Link href="#home">Home</Nav.Link>
-              <Nav.Link href="#link">Link</Nav.Link>
-              <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">
-                  Another action
-                </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item href="#action/3.4">
-                  Separated link
-                </NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-        </Navbar.Collapse> */}
+        <Navbar.Brand
+          style={{ cursor: "pointer" }}
+          onClick={() => router.push("/")}
+        >
+          <div style={{ display: "flex", gap: 2 }}>
+            <Home fontSize="large" />
+            <h3>HELPY</h3>
+          </div>
+        </Navbar.Brand>
         <Connect />
       </Container>
     </Navbar>

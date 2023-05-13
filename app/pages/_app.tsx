@@ -12,7 +12,7 @@ import {
 } from "@txnlab/use-wallet";
 import { TxnProvider } from "@/src/components/Context/TxnContext";
 
-import { ProductProvider } from "@/src/components/Context/product.context";
+import { ProductProvider } from "@/src/components/Context/ProductContext";
 
 const walletProviders = initializeProviders([PROVIDER_ID.PERA], {
   network: "testnet",

@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { useWalletUI } from "@algoscan/use-wallet-ui";
 import { useWallet } from "@txnlab/use-wallet";
-import { useMyFunction } from "./useTransactionManager";
+import { useMyFunction } from "../contractManager/useTransactionManager";
 import Button from "@mui/material/Button";
 import { TxnContext } from "../components/Context/TxnContext";
 import { CRI_ASA_ID, USDC_ASA_ID } from "@/src/constants/utility";

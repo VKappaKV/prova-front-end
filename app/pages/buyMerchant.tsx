@@ -2,10 +2,11 @@ import TopNavbar from "@/src/UI/Navbar";
 import Head from "next/head";
 import UserInfo from "@/src/UI/UserInfo";
 import { useRouter } from "next/router";
+import type { NextPage } from "next";
 import { useWallet } from "@txnlab/use-wallet";
 import Tag from "@/src/UI/Tag";
 import { useContext, useEffect, useState, useRef } from "react";
-import { useMyFunction } from "@/src/UI/useTransactionManager";
+import { useMyFunction } from "@/src/contractManager/useTransactionManager";
 import SliderWithButton from "@/src/UI/Slider";
 import { TxnContext } from "@/src/components/Context/TxnContext";
 import { CRI_ASA_ID, USDC_ASA_ID } from "@/src/constants/utility";
@@ -15,7 +16,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Favorites from "@/src/components/Shop/favorites";
 import ProductList from "@/src/components/Shop/product-list";
 
-export default function Home() {
+const BuyMerchant: NextPage = () => {
   const [favorites, setFavorites] = useState<number[]>([]);
   const txn = useContext(TxnContext);
   const { providers, activeAccount } = useWallet();
@@ -57,8 +58,8 @@ export default function Home() {
   useEffect(() => {
     !!activeAccount && fetchData();
     !!activeAccount && checkAllDonorParams();
-  }, [activeAccount]);
-
+  }, [activeAccount, txn]);
+  /* 
   //Donation button
   interface BuyTokenProps {
     minValue: number;
@@ -84,7 +85,7 @@ export default function Home() {
           "erroraccio seleziona un merch address o fai qualcosa che qua non si va avanti !"
         );
       }
-    };
+    }; 
 
     return (
       <div>
@@ -96,7 +97,7 @@ export default function Home() {
         />
       </div>
     );
-  };
+  };*/
 
   return (
     <>
@@ -121,9 +122,6 @@ export default function Home() {
           <h1>Pay Merchant with CRI page</h1>
           {activeAccount && accountIsDonor ? (
             <div>
-              <h6>Account name: {activeAccount?.name}</h6>
-
-              <br></br>
               <div
                 style={{
                   display: "flex",
@@ -161,12 +159,18 @@ export default function Home() {
                   </TextField>
                 </div>
 
-                <BuyToken
+                {/* <BuyToken
                   minValue={0}
                   maxValue={asa_balance}
                   handlerFunction={pay_merchant}
-                />
+                /> */}
               </Box>
+              <div className="container">
+                <div>
+                  <Favorites />
+                  <ProductList />
+                </div>
+              </div>
             </div>
           ) : (
             <div>
@@ -174,13 +178,9 @@ export default function Home() {
             </div>
           )}
         </div>
-        <div className="container">
-          <div>
-            <Favorites />
-            <ProductList />
-          </div>
-        </div>
       </main>
     </>
   );
-}
+};
+
+export default BuyMerchant;

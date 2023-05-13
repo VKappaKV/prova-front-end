@@ -1,5 +1,8 @@
 import Product from "@/src/types/product";
-import { useProduct } from "../Context/product.context";
+import { useProduct } from "../Context/ProductContext";
+import ShoppingBag from "@mui/icons-material/ShoppingBag";
+import PaymentsTwoTone from "@mui/icons-material/PaymentsTwoTone";
+import { Button } from "@mui/material";
 
 const Favorites: React.FC = () => {
   const { product } = useProduct();
@@ -16,13 +19,23 @@ const Favorites: React.FC = () => {
     <section className="favorites">
       <h2>My Favorite products</h2>
       {myFavorites.length ? (
-        <ul>
-          {myFavorites.map((favorite) => (
-            <li key={favorite.id}>{favorite.title}</li>
-          ))}
-        </ul>
+        <div>
+          <ul>
+            {myFavorites.map((favorite) => (
+              <li key={favorite.id}>{favorite.title}</li>
+            ))}
+          </ul>
+          <Button variant="outlined">
+            <div>
+              <PaymentsTwoTone /> Buy & Donate
+            </div>
+          </Button>
+        </div>
       ) : (
-        <div>😂No favorite product!</div>
+        <div>
+          Pick a product to donate!
+          <ShoppingBag />{" "}
+        </div>
       )}
     </section>
   );

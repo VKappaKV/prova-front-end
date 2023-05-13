@@ -1,6 +1,6 @@
 import React from "react";
 import ProductItem from "./product-item";
-import { useProduct } from "../Context/product.context";
+import { useProduct } from "../Context/ProductContext";
 
 const ProductList: React.FC = () => {
   const { product } = useProduct();
