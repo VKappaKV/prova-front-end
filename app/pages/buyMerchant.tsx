@@ -15,6 +15,7 @@ import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import Favorites from "@/src/components/Shop/favorites";
 import ProductList from "@/src/components/Shop/product-list";
+import merchant_addresses from "@/src/constants/merchantAddresses";
 
 const BuyMerchant: NextPage = () => {
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -26,18 +27,6 @@ const BuyMerchant: NextPage = () => {
   const [asa_balance, set_asa_balance] = useState(0);
   const [accountIsDonor, setAccountIsDonor] = useState(false);
   const merchAddress = useRef<HTMLInputElement>(null);
-
-  const merch_addresses = [
-    {
-      address: "MSHIHS7AHBMSJOXN2HWJTANMUCWSRLAHGLJVHVXDACRFV4JBSJYV7G5ZKU",
-    },
-    {
-      address: "test2",
-    },
-    {
-      address: "test3",
-    },
-  ];
 
   async function fetchData() {
     let response = await get_asa_balance(CRI_ASA_ID);
@@ -151,7 +140,7 @@ const BuyMerchant: NextPage = () => {
                     helperText="Please select a Merchant address"
                     inputRef={merchAddress}
                   >
-                    {merch_addresses.map((option) => (
+                    {merchant_addresses.map((option) => (
                       <MenuItem key={option.address} value={option.address}>
                         {option.address}
                       </MenuItem>

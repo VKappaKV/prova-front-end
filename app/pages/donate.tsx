@@ -12,6 +12,7 @@ import { CRI_ASA_ID, USDC_ASA_ID } from "@/src/constants/utility";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
+import cri_addresses from "@/src/constants/redcrossAddresses";
 
 import type { NextPage } from "next";
 
@@ -29,18 +30,6 @@ const Donate: NextPage = () => {
   const [asa_balance, set_asa_balance] = useState(0);
   const [accountIsDonor, setAccountIsDonor] = useState(false);
   const criAddress = useRef<HTMLInputElement>(null);
-
-  const cri_addresses = [
-    {
-      address: "TBB76BCKOQUEZ2INFYIKCWI7UQYPJ33Y4TMVMAYPURPLAGIBFKCHVBC5L4",
-    },
-    {
-      address: "test2",
-    },
-    {
-      address: "test3",
-    },
-  ];
 
   async function fetchData() {
     let response = await get_asa_balance(CRI_ASA_ID);
